@@ -27,16 +27,25 @@ const App = () => {
     copy[selected] += 1     
     setVotes(copy)
   }
-   
+
+  const getMaxArray = () => Math.max(...votes)
+
   const [selected, setSelected] = useState(0)
   const [votes, setVotes] = useState(new Uint8Array(anecdotes.length))
 
+
+
+
+
   return (
     <div>
-      <p>{anecdotes[selected]}</p>
-      <p>has {votes[selected]} votes</p>
+      <h1>Anecdote of the day</h1>
+      <p>{anecdotes[selected]} <br/> has {votes[selected]} votes</p>
       <Button onClick={updateVotes} text='vote' />
       <Button onClick={updateSelected} text='next anecdote' />
+
+      <h1>Anecdote with most votes</h1>
+      <p>{anecdotes[votes.indexOf(getMaxArray())]} <br/> has {getMaxArray()} votes</p>
     </div>
   )
 }

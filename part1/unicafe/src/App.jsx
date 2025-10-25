@@ -10,26 +10,14 @@ const Button = ({ onClick, text }) => (
 )
 
 const Statistics = ({good,neutral,bad}) => {
-  const Average = ({good, neutral, bad}) => {
-    const total = good + neutral + bad
-    if (total === 0) {
-      return 0
-    }
+  const total = good + neutral + bad
 
-    return (
-      (good * 1 + bad * (-1)) / total
-    )
-  }
+  const Average = ({good, neutral, bad, total}) => (good * 1 + bad * (-1)) / total
+  const Positive = ({good, neutral, bad, total}) => good * 100 / total
 
-  const Positive = ({good, neutral, bad}) => {
-    const total = good + neutral + bad
-    if (total === 0) {
-      return 0
-    }
 
-    return (
-      good * 100 / total
-    )
+  if (total === 0) {
+    return <p>No feedback given</p>
   }
 
   return (
@@ -39,8 +27,8 @@ const Statistics = ({good,neutral,bad}) => {
       <DisplayValue text="neutral" value={neutral} />
       <DisplayValue text="bad" value={bad} />
       <DisplayValue text="all" value={good + neutral + bad} />
-      <DisplayValue text="average" value={Average({good,neutral,bad})} />
-      <DisplayValue text="positive" value={Positive({good,neutral,bad}) + "%"} />
+      <DisplayValue text="average" value={Average({good,neutral,bad, total})} />
+      <DisplayValue text="positive" value={Positive({good,neutral,bad, total}) + "%"} />
     </>
   )
 }

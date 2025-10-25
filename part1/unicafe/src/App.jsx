@@ -4,7 +4,7 @@ const DisplayTitle = ({title}) => <h1>{title}</h1>
 
 
 
-const StatisticLine = (props) => <p>{props.text} {props.value}</p>
+const StatisticLine = (props) => <tr><td>{props.text} {props.value}</td></tr>
 
 const Button = ({ onClick, text }) => (
   <button onClick={onClick}>
@@ -26,17 +26,20 @@ const Statistics = (props) => {
     return <p>No feedback given</p>
   }
 
-  return (
-    <>
-      <StatisticLine text="good" value={good} />
-      <StatisticLine text="neutral" value={neutral} />
-      <StatisticLine text="bad" value={bad} />
+  return ( 
+    <table>
+      <tbody>
+        <StatisticLine text="good" value={good} />
+        <StatisticLine text="neutral" value={neutral} />
+        <StatisticLine text="bad" value={bad} />
 
-      <StatisticLine text="all" value={total} />
-      <StatisticLine text="average" value={averageValue} />
+        <StatisticLine text="all" value={total} />
 
-      <StatisticLine text="positive" value={positivePercentage + "%"} />
-    </>
+        {/* Helped by internet, I found ".toFixed(1) to correctly round value" */}
+        <StatisticLine text="average" value={averageValue.toFixed(1)} />
+        <StatisticLine text="positive" value={positivePercentage.toFixed(1) + "%"} />
+      </tbody>
+    </table>
   )
 }
 

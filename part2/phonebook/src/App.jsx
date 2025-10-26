@@ -16,10 +16,15 @@ const App = () => {
   }
 
   const onClick = (event) => {
-    console.log(event.target.value)
     event.preventDefault()
-    const newPersons = persons.concat({name: newName})
-    setPersons(newPersons)
+
+    if (persons.some(person => person.name === newName)) {
+      alert(`${newName} is already added to phonebook`)
+    }
+    else {
+      const newPersons = persons.concat({name: newName})
+      setPersons(newPersons)
+    }
   }
 
 

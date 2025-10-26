@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios' 
 
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+
+import personService from './services/persons'
 
 const App = (props) => {
   const [persons, setPersons] = useState([]) 
@@ -12,17 +13,14 @@ const App = (props) => {
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
 
-  const hook = () => {
-    axios
-      .get('http://localhost:3001/persons')
+  useEffect(() => {
+    personService
+      .getAll()
       .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
+        setPersons(response)
       })
-  }
-
-  useEffect(hook, [])
-
+  }, [])
+  
   return (
     <div>
       <h2>Phonebook</h2>

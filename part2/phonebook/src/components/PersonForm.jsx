@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 const PersonForm = ({persons, setPersons, newName, setNewName, newNumber, setNewNumber}) => {
     const handleNameInputChange = (event) => {
         setNewName(event.target.value)
@@ -17,8 +19,19 @@ const PersonForm = ({persons, setPersons, newName, setNewName, newNumber, setNew
         alert(`${newNumber} is already added to phonebook`)
         }
         else {
-        const newPersons = persons.concat({name: newName, number: newNumber, id:persons.length+1})
-        setPersons(newPersons)
+            event.preventDefault()
+            
+            const personObject = {
+                name: newName,
+                number: newNumber,
+            }
+
+            axios
+                .post('http://localhost:3001/persons', personObject)
+                .then(response => {
+                    setPersons(persons.concat(response.data))
+                    }
+                )
         }
     }
 

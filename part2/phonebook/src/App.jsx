@@ -8,7 +8,6 @@ import personService from './services/persons'
 
 const Notification = ({ message }) => {
   const messageStyle = {
-    color: 'green',
     background: 'lightgrey',
     fontSize: 20,
     borderStyle: 'solid',
@@ -17,17 +16,25 @@ const Notification = ({ message }) => {
     marginBottom: 10,
   }
 
-  if (message === null) {
+  if (message.content === null) {
     return null
   }
 
-  if (message === '') {
+  if (message.content === '') {
     return null
+  }
+
+  if(message.type == 'error') {
+    messageStyle.color = 'red'
+  }
+  else
+  {
+    messageStyle.color = 'green'
   }
 
   return (
     <div style={messageStyle}>
-      <b>{message}</b>
+      <b>{message.content}</b>
     </div>
   )
 }
@@ -38,7 +45,7 @@ const App = (props) => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState({content:'', type:''})
 
 
   useEffect(() => {

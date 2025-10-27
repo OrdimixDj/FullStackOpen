@@ -23,11 +23,20 @@ const PersonForm = ({setMessage, persons, setPersons, newName, setNewName, newNu
                     personService
                         .update(alreadyExistingPerson.id, changedPerson)
                         .then(returnedPerson => {
-                            setMessage(`Modified old ${returnedPerson.name} number to ${returnedPerson.number}`)
+                            setMessage({content:`Modified old ${returnedPerson.name} number to ${returnedPerson.number}`, type:'other'})
                             setPersons(persons.map(person => person.id !== alreadyExistingPerson.id ? person : returnedPerson))
 
                             setTimeout(() => {
-                                setMessage(null)
+                                setMessage({content:null, type:null})
+                            }, 5000)
+                        })
+                        .catch(error => {
+                            setMessage({content:`Information of ${alreadyExistingPerson.name} has already been removed from server`, type:'error'})
+                            
+                            setPersons(persons.filter(person => person.id !== alreadyExistingPerson.id));
+                            
+                            setTimeout(() => {
+                                setMessage({content:null, type:null})
                             }, 5000)
                         })
                 }
@@ -50,11 +59,11 @@ const PersonForm = ({setMessage, persons, setPersons, newName, setNewName, newNu
             personService
                 .create(personObject)
                 .then(returnedPerson => {
-                    setMessage(`Added ${returnedPerson.name}`)
+                    setMessage({content:`Added ${returnedPerson.name}`, type:'other'})
                     setPersons(persons.concat(returnedPerson))
 
                     setTimeout(() => {
-                        setMessage(null)
+                        setMessage({content:null, type:null})
                     }, 5000)
                 })
         }

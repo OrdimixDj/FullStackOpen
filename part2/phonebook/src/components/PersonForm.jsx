@@ -28,9 +28,10 @@ const PersonForm = ({persons, setPersons, newName, setNewName, newNumber, setNew
 
             personService
                 .create(personObject)
-                .then(response => {
-                    setPersons(persons.concat(response))
-                })
+                    .then(response => {
+                        setPersons(persons.concat(response))
+                    }
+                )
         }
     }
 

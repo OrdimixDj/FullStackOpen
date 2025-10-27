@@ -1,6 +1,6 @@
 import personService from '../services/persons'
 
-const PersonForm = ({persons, setPersons, newName, setNewName, newNumber, setNewNumber}) => {
+const PersonForm = ({setMessage, persons, setPersons, newName, setNewName, newNumber, setNewNumber}) => {
     const handleNameInputChange = (event) => {
         setNewName(event.target.value)
     }
@@ -12,9 +12,8 @@ const PersonForm = ({persons, setPersons, newName, setNewName, newNumber, setNew
     const onClick = (event) => {
         event.preventDefault()
 
-        const alreadyExistingPerson = persons.find(
-            person => person.name.toLowerCase() === newName.toLowerCase()
-        )
+        const alreadyExistingPerson = persons.find(person => person.name.toLowerCase() === newName.toLowerCase())
+        const alreadyExistingNumber = persons.find(person => person.number.toLowerCase() === newNumber.toLowerCase())
 
         if (alreadyExistingPerson) {
             if (alreadyExistingPerson.number !== newNumber) {
@@ -24,7 +23,12 @@ const PersonForm = ({persons, setPersons, newName, setNewName, newNumber, setNew
                     personService
                         .update(alreadyExistingPerson.id, changedPerson)
                         .then(returnedPerson => {
+                            setMessage(`Modified old ${returnedPerson.name} number to ${returnedPerson.number}`)
                             setPersons(persons.map(person => person.id !== alreadyExistingPerson.id ? person : returnedPerson))
+
+                            setTimeout(() => {
+                                setMessage(null)
+                            }, 5000)
                         })
                 }
             }
@@ -32,8 +36,8 @@ const PersonForm = ({persons, setPersons, newName, setNewName, newNumber, setNew
                 alert(`${newName} is already added to phonebook`)
             }
         }
-        else if (persons.some(number => number.number === newNumber)) {
-        alert(`${newNumber} is already added to phonebook`)
+        else if (alreadyExistingNumber) {
+            alert(`${newNumber} is already added to phonebook`)
         }
         else {
             event.preventDefault()
@@ -45,10 +49,14 @@ const PersonForm = ({persons, setPersons, newName, setNewName, newNumber, setNew
 
             personService
                 .create(personObject)
-                    .then(response => {
-                        setPersons(persons.concat(response))
-                    }
-                )
+                .then(returnedPerson => {
+                    setMessage(`Added ${returnedPerson.name}`)
+                    setPersons(persons.concat(returnedPerson))
+
+                    setTimeout(() => {
+                        setMessage(null)
+                    }, 5000)
+                })
         }
     }
 

@@ -13,10 +13,47 @@ const DisplayNames = ({country, setCountryShowButtonRequest}) => {
   )
 }
 
-const DisplayCountry = ({country}) => { 
+const DisplayWeather = ({capital, weather, setWeather}) => { 
+  const API_KEY = import.meta.env.VITE_SOME_KEY
+
+  useEffect(() => {
+      console.log('fetching weather for', capital ,'...')
+      setWeather(null)
+
+      axios
+        .get(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&units=metric&appid=${API_KEY}`)
+        .then(response => {
+          const weatherData = response.data;
+
+          setWeather({
+            temperature: weatherData.main.temp,
+            windSpeed: weatherData.wind.speed,
+            iconUrl: `https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`,
+            altText: weatherData.weather[0].description
+          });
+        })
+    }, [capital])
+
+    if (weather) {
+      return(
+        <>
+          <p>Temperature {weather.temperature} Celsius</p>
+          <img src={weather.iconUrl} alt={weather.altText}  />
+          <p>Wind {weather.windSpeed} m/s</p>
+        </>
+      )
+    }
+    else {
+      return(
+        <p><b>Weather data is loading...</b></p>
+      )
+    }
+}
+
+const DisplayCountry = ({country, weather, setWeather}) => { 
   // Found this information on internet: we can't read elements with map if it's not an array.
   // I could have use for loop, but I preferred that way to stay in the course subject
-  const languageNames = Object.values(country.languages) 
+  const languageNames = Object.values(country.languages)
 
   return(
     <div>
@@ -29,17 +66,19 @@ const DisplayCountry = ({country}) => {
       </ul>
 
       <img src={country.flags.png} alt={country.flags.alt} style={{width: '200px', height: 'auto'}} />
+
+      <h2>Weather in {country.capital}</h2>
+      <DisplayWeather capital={country.capital} weather={weather} setWeather={setWeather} />
     </div>
   )
 }
 
-const Display = ({countryRequest, countries, countryShowButtonRequest, setCountryShowButtonRequest}) => {
+const Display = ({countryRequest, countries, countryShowButtonRequest, setCountryShowButtonRequest, weather, setWeather}) => {
   const filteredCountries = countries.filter(country => country.name.common.toLowerCase().includes(countryRequest.toLowerCase()))
 
   if (countryShowButtonRequest) {
-      console.log(countryShowButtonRequest)
     return (
-      <DisplayCountry country={countries.filter(country => country.name.common.toLowerCase().includes(countryShowButtonRequest.toLowerCase()))[0]} />
+      <DisplayCountry country={countries.filter(country => country.name.common.toLowerCase().includes(countryShowButtonRequest.toLowerCase()))[0]} weather={weather} setWeather={setWeather} />
     )
   }
 
@@ -55,7 +94,7 @@ const Display = ({countryRequest, countries, countryShowButtonRequest, setCountr
   }
   else if (filteredCountries.length === 1) {
     return(
-      <DisplayCountry country={filteredCountries[0]} />
+      <DisplayCountry country={filteredCountries[0]} weather={weather} setWeather={setWeather} />
     )
   }
 }
@@ -64,11 +103,12 @@ const App = () => {
   const [countryRequest, setCountryRequest] = useState('')
   const [countryShowButtonRequest, setCountryShowButtonRequest] = useState(null)
   const [countries, setCountries] = useState([])
+  const [weather, setWeather] = useState(null)
 
   useEffect(() => {
     console.log('fetching countries...')
     axios
-      .get(`https://restcountries.com/v3.1/all?fields=name,capital,area,languages,flags`)
+      .get('https://restcountries.com/v3.1/all?fields=name,capital,area,languages,flags')
       .then(response => {
         setCountries(response.data)
       })
@@ -82,7 +122,8 @@ const App = () => {
   return (
     <div>
       <form>find countries <input value={countryRequest} onChange={handleChange} /></form>
-      <Display countryRequest={countryRequest} countries={countries} countryShowButtonRequest={countryShowButtonRequest} setCountryShowButtonRequest={setCountryShowButtonRequest} />
+      <Display countryRequest={countryRequest} countries={countries} countryShowButtonRequest={countryShowButtonRequest}
+        setCountryShowButtonRequest={setCountryShowButtonRequest} weather={weather} setWeather={setWeather} />
     </div>
   )
 }

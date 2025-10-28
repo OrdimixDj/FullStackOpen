@@ -39,7 +39,7 @@ const Notification = ({ message }) => {
   )
 }
 
-const App = (props) => {
+const App = () => {
   const [persons, setPersons] = useState([]) 
 
   const [newName, setNewName] = useState('')
@@ -60,7 +60,7 @@ const App = (props) => {
     <div>
       <h2>Phonebook</h2>
       <Notification message={message} />
-      <Filter setNewFilter={setNewFilter} />
+      <Filter newFilter={newFilter} setNewFilter={setNewFilter} />
       <h3>Add a new</h3>
       <PersonForm message={message} setMessage={setMessage} persons={persons} setPersons={setPersons} newName={newName} setNewName={setNewName} newNumber={newNumber} setNewNumber={setNewNumber} />
       <h3>Numbers</h3>

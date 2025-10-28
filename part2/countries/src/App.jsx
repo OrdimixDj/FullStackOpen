@@ -1,9 +1,15 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
-const DisplayNames = ({name}) => { 
+const DisplayNames = ({country, setCountryShowButtonRequest}) => { 
+  const countryName = country.name.common
+
+  const handleShowButtonClick = () => { 
+    setCountryShowButtonRequest(countryName)
+  }
+
   return(
-    <p>{name}</p>
+    <p>{countryName} <button type="submit" onClick={handleShowButtonClick}>Show</button></p>
   )
 }
 
@@ -27,8 +33,15 @@ const DisplayCountry = ({country}) => {
   )
 }
 
-const Display = ({countryRequest, countries}) => {
+const Display = ({countryRequest, countries, countryShowButtonRequest, setCountryShowButtonRequest}) => {
   const filteredCountries = countries.filter(country => country.name.common.toLowerCase().includes(countryRequest.toLowerCase()))
+
+  if (countryShowButtonRequest) {
+      console.log(countryShowButtonRequest)
+    return (
+      <DisplayCountry country={countries.filter(country => country.name.common.toLowerCase().includes(countryShowButtonRequest.toLowerCase()))[0]} />
+    )
+  }
 
   if (filteredCountries.length > 10) {
     return (
@@ -37,7 +50,7 @@ const Display = ({countryRequest, countries}) => {
   }
   else if (filteredCountries.length > 1 && filteredCountries.length < 10) {
     return (
-      filteredCountries.map(country => <DisplayNames key={country.name.official} name={country.name.common} />)
+      filteredCountries.map(country => <DisplayNames key={country.name.official} country={country} setCountryShowButtonRequest={setCountryShowButtonRequest} />)
     )
   }
   else if (filteredCountries.length === 1) {
@@ -49,6 +62,7 @@ const Display = ({countryRequest, countries}) => {
 
 const App = () => {
   const [countryRequest, setCountryRequest] = useState('')
+  const [countryShowButtonRequest, setCountryShowButtonRequest] = useState(null)
   const [countries, setCountries] = useState([])
 
   useEffect(() => {
@@ -61,13 +75,14 @@ const App = () => {
   }, [])
 
   const handleChange = (event) => {
+    setCountryShowButtonRequest(null)
     setCountryRequest(event.target.value)
   }
 
   return (
     <div>
       <form>find countries <input value={countryRequest} onChange={handleChange} /></form>
-      <Display countryRequest={countryRequest} countries={countries} />
+      <Display countryRequest={countryRequest} countries={countries} countryShowButtonRequest={countryShowButtonRequest} setCountryShowButtonRequest={setCountryShowButtonRequest} />
     </div>
   )
 }

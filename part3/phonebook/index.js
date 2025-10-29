@@ -1,6 +1,9 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
+
 const app = express()
+app.use(cors())
 
 morgan.token('body', (req, res) => {
   // Because JSON.stringify returns '{}' if req.body is empty, no need to put a condition tester if else

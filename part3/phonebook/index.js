@@ -24,8 +24,12 @@ let phonebook = [
     }
 ]
 
-app.get('/', (request, response) => {
-  response.send('<h1>Hello World!</h1>')
+app.get('/info', (request, response) => {
+    const requestTime = new Date()
+
+    response.send(` <p>Phonebook has info for ${phonebook.length} people</p>
+                    <p>${requestTime}</p>`)
+
 })
 
 app.get('/api/persons', (request, response) => {

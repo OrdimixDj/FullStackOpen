@@ -1,6 +1,14 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 
+morgan.token('body', (req, res) => {
+  // Because JSON.stringify returns '{}' if req.body is empty, no need to put a condition tester if else
+  return JSON.stringify(req.body)
+})
+
+// Following internet, tiny is equivalent to ':method :url :status :res[content-length] - :response-time ms'. I just needed to add body at the end.
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 app.use(express.json())
 
 let phonebook = [
@@ -74,7 +82,6 @@ app.post('/api/persons', (request, response) => {
       error: 'name must be unique' 
     })
   }
-
 
   const person = {
     id: generateId(),

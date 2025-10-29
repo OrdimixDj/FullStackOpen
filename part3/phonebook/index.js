@@ -5,6 +5,8 @@ const cors = require('cors')
 const app = express()
 app.use(cors())
 
+app.use(express.static('build'))
+
 morgan.token('body', (req, res) => {
   // Because JSON.stringify returns '{}' if req.body is empty, no need to put a condition tester if else
   return JSON.stringify(req.body)

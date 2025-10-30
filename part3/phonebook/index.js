@@ -9,7 +9,7 @@ app.use(cors())
 
 app.use(express.static('build'))
 
-morgan.token('body', (req, res) => {
+morgan.token('body', (req) => {
   // Because JSON.stringify returns '{}' if req.body is empty, no need to put a condition tester if else
   return JSON.stringify(req.body)
 })
@@ -38,14 +38,11 @@ const errorHandler = (error, request, response, next) => {
 }
 
 app.get('/info', (request, response, next) => {
-    const requestTime = new Date()
+  const requestTime = new Date()
 
-    Person.countDocuments({})
-        .then(count => { 
-          response.send(` <p>Phonebook has info for ${count} people</p>
-                          <p>${requestTime}</p>`)
-        })
-        .catch(error => next(error))
+  Person
+    .countDocuments({}).then(count => { response.send(` <p>Phonebook has info for ${count} people</p><p>${requestTime}</p>`)})
+    .catch(error => next(error))
 })
 
 app.get('/api/persons', (request, response) => {
@@ -62,7 +59,7 @@ app.get('/api/persons/:id', (request, response) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
@@ -72,8 +69,8 @@ app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
   if (!body.name || !body.number) {
-    return response.status(400).json({ 
-      error: 'name or number missing' 
+    return response.status(400).json({
+      error: 'name or number missing'
     })
   }
 
@@ -82,14 +79,16 @@ app.post('/api/persons', (request, response, next) => {
     number: body.number,
   })
 
-  personToAdd .save().then(savedPerson => {response.json(savedPerson)})
-              .catch(error => next(error))
+  personToAdd
+    .save()
+    .then(savedPerson => {response.json(savedPerson)})
+    .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-  const {name, number} = request.body
+  const { name, number } = request.body
 
-  Person.findByIdAndUpdate(request.params.id, {name, number}, { new: true, runValidators: true, context: 'query' })
+  Person.findByIdAndUpdate(request.params.id, { name, number }, { new: true, runValidators: true, context: 'query' })
     .then(updatedPerson => {
       response.json(updatedPerson)
     })

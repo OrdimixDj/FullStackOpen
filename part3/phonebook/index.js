@@ -24,8 +24,14 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
-  } else if (error.name === 'ValidationError') {
+  }
+  else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
+  }
+  else if (error.code === 11000) { // Following Google, error associated to the unique key is 11000
+    return response.status(409).json({
+      error: `Name '${request.body.name}' already exists. Name must be unique.`
+    })
   }
 
   next(error)
@@ -75,7 +81,7 @@ app.post('/api/persons', (request, response, next) => {
     name: body.name,
     number: body.number,
   })
-  
+
   personToAdd .save().then(savedPerson => {response.json(savedPerson)})
               .catch(error => next(error))
 })

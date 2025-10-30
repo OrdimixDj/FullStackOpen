@@ -2,16 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-const mongoose = require('mongoose')
-
-const url = process.env.MONGODB_URI
-
-const personSchema = new mongoose.Schema({
- name: String,
- number: String,
-})
-
-const Person = mongoose.model('Person', personSchema)
+const Person = require('./models/person')
 
 const app = express()
 app.use(cors())
@@ -66,14 +57,9 @@ app.get('/api/persons', (request, response) => {
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = phonebook.find(person => person.id === id)
-
-    if (person) {
-        response.json(person)
-    } else {
-        response.status(404).end()
-    }
+  Person.findById(request.params.id).then(person => {
+    response.json(person)
+  })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
@@ -88,6 +74,8 @@ const generateId = () => {
 }
 
 app.post('/api/persons', (request, response) => {
+  console.log('hey');
+  
   const body = request.body
 
   if (!body.name || !body.number) {
@@ -96,21 +84,12 @@ app.post('/api/persons', (request, response) => {
     })
   }
 
-  if(phonebook.find(person => person.name === body.name)) {
-    return response.status(400).json({ 
-      error: 'name must be unique' 
-    })
-  }
-
-  const person = {
-    id: generateId(),
+  const personToAdd = new Person({
     name: body.name,
     number: body.number,
-  }
-
-  phonebook = phonebook.concat(person)
-
-  response.json(person)
+  })
+  
+  personToAdd.save().then(savedPerson => {response.status(201).json(savedPerson)})
 })
 
 const PORT = process.env.PORT

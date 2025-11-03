@@ -30,10 +30,10 @@ const PersonForm = ({setMessage, persons, setPersons, newName, setNewName, newNu
                                 setMessage({content:null, type:null})
                             }, 5000)
                         })
-                        .catch(error => {
+                        .catch(() => {
                             setMessage({content:`Information of ${alreadyExistingPerson.name} has already been removed from server`, type:'error'})
                             
-                            setPersons(persons.filter(person => person.id !== alreadyExistingPerson.id));
+                            setPersons(persons.filter(person => person.id !== alreadyExistingPerson.id))
                             
                             setTimeout(() => {
                                 setMessage({content:null, type:null})

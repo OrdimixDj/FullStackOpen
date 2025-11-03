@@ -11,8 +11,8 @@ const Header = ({ name }) => <h1>{name}</h1>
 
 const Content = ({ parts }) => {
   const total = parts.reduce((accumulator, parts) => {
-    return accumulator + parts.exercises;
-  }, 0);
+    return accumulator + parts.exercises
+  }, 0)
 
   return (
     <>

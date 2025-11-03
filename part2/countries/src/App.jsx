@@ -23,14 +23,14 @@ const DisplayWeather = ({capital, weather, setWeather}) => {
       axios
         .get(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&units=metric&appid=${API_KEY}`)
         .then(response => {
-          const weatherData = response.data;
+          const weatherData = response.data
 
           setWeather({
             temperature: weatherData.main.temp,
             windSpeed: weatherData.wind.speed,
             iconUrl: `https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`,
             altText: weatherData.weather[0].description
-          });
+          })
         })
     }, [capital])
 

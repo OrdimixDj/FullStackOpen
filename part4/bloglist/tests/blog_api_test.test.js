@@ -28,7 +28,7 @@ test('blogs has an id an not an _id', async () => {
   expect(firstBlog.id).toBeDefined()
 })
 
-test('a valid blog can be added ', async () => {
+test('a valid blog can be added', async () => {
   const newBlog = {
     title: 'Title test',
     author: 'Author test',
@@ -62,6 +62,25 @@ test('a valid blog can be added ', async () => {
 
   const totLikes = blogsAtEnd.map(b => b.likes)
   expect(totLikes).toContain(0)
+})
+
+test('a blog without any like is added with 0 like', async () => {
+  const newBlog = {
+    title: 'Title test',
+    author: 'Author test',
+    url: 'Url test'
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+
+  const likes = blogsAtEnd.map(b => b.likes)
+  expect(likes).toContain(0) // 0 is supposed to be associated to that blog because the other blogs have 7 & 5 likes
 })
 
 afterAll(async () => {

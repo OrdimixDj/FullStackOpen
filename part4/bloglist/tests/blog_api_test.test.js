@@ -22,6 +22,12 @@ test('blogs are correctly returned as json', async () => {
   expect(response.body).toHaveLength(helper.initialBlogs.length)
 })
 
+test('blogs has an id an not an _id', async () => {
+  const response = await api.get('/api/blogs')
+  const firstBlog = response.body[0]
+  expect(firstBlog.id).toBeDefined()
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })

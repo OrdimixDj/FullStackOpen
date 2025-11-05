@@ -83,6 +83,30 @@ test('a blog without any like is added with 0 like', async () => {
   expect(likes).toContain(0) // 0 is supposed to be associated to that blog because the other blogs have 7 & 5 likes
 })
 
+test('a blog without title or url or both returns error 400', async () => {
+  const blogWithoutTitle = {
+    author: 'Author test',
+    url: 'Url test',
+    likes: 0
+  }
+
+  const blogWithoutUrl = {
+    title: 'Title test',
+    author: 'Author test',
+    likes: 0
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(blogWithoutTitle)
+    .expect(400)
+
+  await api
+    .post('/api/blogs')
+    .send(blogWithoutUrl)
+    .expect(400)
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })

@@ -3,6 +3,39 @@ import loginService from './services/login'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 
+const Notification = ({ message }) => {
+  const messageStyle = {
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  }
+
+  if (message.content === null) {
+    return null
+  }
+
+  if (message.content === '') {
+    return null
+  }
+
+  if(message.type == 'error') {
+    messageStyle.color = 'red'
+  }
+  else
+  {
+    messageStyle.color = 'green'
+  }
+
+  return (
+    <div style={messageStyle}>
+      <b>{message.content}</b>
+    </div>
+  )
+}
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
@@ -11,6 +44,7 @@ const App = () => {
   const [title, setTitle] = useState('') 
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [message, setMessage] = useState({content:'', type:''})
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -44,7 +78,17 @@ const App = () => {
       setPassword('')
     } catch (exception)
     {
-      console.log(exception)
+      const statusCode = exception.response.status
+
+      if (statusCode === 401) {
+          setMessage({content:`wrong username or password`, type:'error'})
+      } else {
+          setMessage({content:`Error: ${exception.response.data.error}`, type:'error'})
+      }
+      
+      setTimeout(() => {
+          setMessage({content:null, type:null})
+      }, 5000)
     }
   }
 
@@ -57,7 +101,11 @@ const App = () => {
       setUser(null)
     } catch (exception)
     {
-      console.log(exception)
+      setMessage({content:`Error: ${exception.response.data.error}`, type:'error'})
+
+      setTimeout(() => {
+          setMessage({content:null, type:null})
+      }, 5000)
     }
   }
 
@@ -73,16 +121,32 @@ const App = () => {
     try {
       const blogCreated = await blogService.create(newBlog)
       setBlogs(blogs.concat(blogCreated))
-    } catch (error) {
-      console.log(error)
-      
+
+      setTitle('')
+      setAuthor('')
+      setUrl('')
+
+      setMessage({content:`a new blog ${title} by ${author} added`, type:'other'})
+    } catch (exception) {
+      const statusCode = exception.response.status
+
+      if (statusCode === 400) {
+        setMessage({content:`Bad request: title and url are required`, type:'error'})
+      } else {
+        setMessage({content:`Error: ${exception.response.data.error}`, type:'error'})
+      }
     }
+
+    setTimeout(() => {
+      setMessage({content:null, type:null})
+    }, 5000)
   } 
 
   if (user === null) {
     return (
       <div>
         <h2>Log in to application</h2>
+        <Notification message={message} />
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -111,6 +175,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      <Notification message={message} />
       <p>{user.name} logged in<button onClick={disconnectUser}>logout</button></p><br/><br/>
       <form onSubmit={handleCreateBlog}>
           <div>

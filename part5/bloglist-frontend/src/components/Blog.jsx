@@ -35,11 +35,11 @@ const Blog = ({ blog, handleBlogUpdate, handleBlogRemove, user }) => {
   return(
     <div style={blogStyle}>
       <div>
-        <div style={hideWhenVisible}>
+        <div style={hideWhenVisible} className='blog-not-complete'>
           {blog.title} {blog.author} <button onClick={() => setVisible(true)}>view</button>
         </div>
 
-        <div style={showWhenVisible}>
+        <div style={showWhenVisible} className='blog-complete'>
           {blog.title} {blog.author} <button onClick={() => setVisible(false)}>hide</button>
           <br/>{blog.url}
           <br/>likes {blog.likes} <button onClick={increaseLike}>like</button>

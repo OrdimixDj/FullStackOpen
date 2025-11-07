@@ -161,8 +161,9 @@ const App = () => {
   return (
     <div>
       <Notification message={message} />
-      <p>{user.name} logged in<button onClick={disconnectUser}>logout</button></p><br/><br/>
-      <Togglable buttonLabel="new blog">
+      <h2>blogs</h2>
+      <p>{user.name} logged in <button onClick={disconnectUser}>logout</button></p><br/><br/>
+      <Togglable buttonLabel="create new blog">
         <BlogForm createBlog={createBlog} />
       </Togglable>
       {blogs.map(blog =>

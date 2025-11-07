@@ -63,6 +63,7 @@ const App = () => {
   const createBlog = async (blogObject) => {
     try {
       const returnedBlog = await blogService.create(blogObject)
+      returnedBlog.user = user
       setBlogs(blogs.concat(returnedBlog))
       setMessage({content:`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`, type:'other'})
     } catch (exception) {

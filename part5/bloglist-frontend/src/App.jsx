@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import loginService from './services/login'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
+import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
 
 const Notification = ({ message }) => {
   const messageStyle = {
@@ -41,9 +43,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('') 
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [message, setMessage] = useState({content:'', type:''})
 
   useEffect(() => {
@@ -60,6 +59,26 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
+
+  const createBlog = async (blogObject) => {
+    try {
+      const returnedBlog = await blogService.create(blogObject)
+      setBlogs(blogs.concat(returnedBlog))
+      setMessage({content:`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`, type:'other'})
+    } catch (exception) {
+      const statusCode = exception.response.status
+
+      if (statusCode === 400) {
+        setMessage({content:`Bad request: title and url are required`, type:'error'})
+      } else {
+        setMessage({content:`Error: ${exception.response.data.error}`, type:'error'})
+      }
+    }
+
+    setTimeout(() => {
+      setMessage({content:null, type:null})
+    }, 5000)
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -109,39 +128,6 @@ const App = () => {
     }
   }
 
-  const handleCreateBlog = async (event) => {
-    event.preventDefault()
-    
-    const newBlog = {
-        title: title,
-        author: author,
-        url: url,
-    }
-
-    try {
-      const blogCreated = await blogService.create(newBlog)
-      setBlogs(blogs.concat(blogCreated))
-
-      setTitle('')
-      setAuthor('')
-      setUrl('')
-
-      setMessage({content:`a new blog ${title} by ${author} added`, type:'other'})
-    } catch (exception) {
-      const statusCode = exception.response.status
-
-      if (statusCode === 400) {
-        setMessage({content:`Bad request: title and url are required`, type:'error'})
-      } else {
-        setMessage({content:`Error: ${exception.response.data.error}`, type:'error'})
-      }
-    }
-
-    setTimeout(() => {
-      setMessage({content:null, type:null})
-    }, 5000)
-  } 
-
   if (user === null) {
     return (
       <div>
@@ -174,21 +160,11 @@ const App = () => {
 
   return (
     <div>
-      <h2>blogs</h2>
       <Notification message={message} />
       <p>{user.name} logged in<button onClick={disconnectUser}>logout</button></p><br/><br/>
-      <form onSubmit={handleCreateBlog}>
-          <div>
-              <h2>create new</h2>
-              title:<input type="text" value={title} name="Title" onChange={({ target }) => setTitle(target.value)}/>
-              <br/>
-              author:<input type="text" value={author} name="Author" onChange={({ target }) => setAuthor(target.value)}/>
-              <br/>
-              url:<input type="text" value={url} name="Url" onChange={({ target }) => setUrl(target.value)}/>
-          </div>
-          <button type="submit">create</button>
-        </form>
-    
+      <Togglable buttonLabel="new blog">
+        <BlogForm createBlog={createBlog} />
+      </Togglable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}

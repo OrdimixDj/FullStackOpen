@@ -64,6 +64,20 @@ const App = () => {
     }
   }
 
+  const handleBlogRemove = async (blogToDelete) => {
+    try {
+      blogService.remove(blogToDelete)
+      setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id))
+      setMessage({content:`Blog ${blogToDelete.title} by ${blogToDelete.author} successfully removed`, type:'other'})
+    } catch (exception) {
+      setMessage({content:`Unable to remove that blog. Exact error: ${exception.response.data.error}`, type:'error'})
+    }
+
+    setTimeout(() => {
+        setMessage({content:null, type:null})
+    }, 5000)
+  }
+
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
@@ -184,7 +198,7 @@ const App = () => {
       </Togglable>
       
       {sortedBlogs.map(blog =>
-        <Blog key={blog.id} blog={blog} handleBlogUpdate={handleBlogUpdate} />
+        <Blog key={blog.id} blog={blog} handleBlogUpdate={handleBlogUpdate} handleBlogRemove={handleBlogRemove} user={user} />
       )}
     </div>
   )

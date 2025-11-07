@@ -1,10 +1,11 @@
 import { useState } from 'react'
 
-const Blog = ({ blog, handleBlogUpdate }) => {
+const Blog = ({ blog, handleBlogUpdate, handleBlogRemove, user }) => {
   const [visible, setVisible] = useState(false)
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
+  const showWhenSameUser = { display: user.username === blog.user.username ? '' : 'none' }
 
   const blogStyle = {
     paddingTop: 10,
@@ -23,6 +24,14 @@ const Blog = ({ blog, handleBlogUpdate }) => {
     handleBlogUpdate(updatedBlog)
   }
 
+  const removeBlog = event => {
+    event.preventDefault()
+
+    if(window.confirm('Remove blog ' + blog.title + ' by ' + blog.author)) {
+      handleBlogRemove(blog)
+    }
+  }
+
   return(
     <div style={blogStyle}>
       <div>
@@ -35,6 +44,10 @@ const Blog = ({ blog, handleBlogUpdate }) => {
           <br/>{blog.url}
           <br/>likes {blog.likes} <button onClick={increaseLike}>like</button>
           <br/>{blog.user.name}
+          <div style={showWhenSameUser}>
+            <button onClick={removeBlog}>remove</button>
+          </div>
+
         </div>
       </div>
     </div> 

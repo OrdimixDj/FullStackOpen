@@ -54,3 +54,19 @@ test('clicking the button shows url and likes', async () => {
   const likesText = screen.getByText(blog.likes, { exact: false })
   expect(likesText).toBeDefined()
 })
+
+test('clicking the likes 2 times calls 2 times mockHandler', async () => {
+  const { container } = render(
+    <Blog blog={blog} handleBlogUpdate={handleBlogUpdate} handleBlogRemove={handleBlogRemove} user={mockUser} />
+  )
+
+  const user = userEvent.setup()
+  const viewButton = screen.getByText('view')
+  await user.click(viewButton)
+
+  const likeButton = screen.getByText('like')
+  await user.click(likeButton)
+  await user.click(likeButton)
+
+  expect(mockHandler.mock.calls).toHaveLength(2)
+})

@@ -51,6 +51,19 @@ const App = () => {
     )  
   }, [])
 
+  const handleBlogUpdate = async (updatedBlog) => {
+    try {
+      blogService.update(updatedBlog)
+      setBlogs(blogs.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog))
+    } catch (exception) {
+      setMessage({content:`Unable to like that blog. Exact error: ${exception.response.data.error}`, type:'error'})
+
+      setTimeout(() => {
+        setMessage({content:null, type:null})
+      }, 5000)
+    }
+  }
+
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
@@ -168,7 +181,7 @@ const App = () => {
         <BlogForm createBlog={createBlog} />
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} handleBlogUpdate={handleBlogUpdate} />
       )}
     </div>
   )

@@ -61,20 +61,22 @@ blogRouter.delete('/:id', middleware.tokenExtractor, middleware.userExtractor, a
   }
 })
 
-blogRouter.put('/:id', async (request, response, next) => {
+blogRouter.put('/:id', middleware.tokenExtractor, middleware.userExtractor, async (request, response, next) => {
   const { title, author, url, likes } = request.body
+  const user = request.user
+
+  const blog = await Blog.findById(request.params.id)
+
+  if (!blog) {
+      return response.status(404).end()
+  }
 
   try {
-    const blog = await Blog.findById(request.params.id)
-
-    if (!blog) {
-        return response.status(404).end()
-    }
-
     blog.title = title
     blog.author = author
     blog.url = url
     blog.likes = likes
+    blog.user = user
 
     const updatedBlog = await blog.save()
     response.json(updatedBlog)

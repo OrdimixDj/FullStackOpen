@@ -55,6 +55,7 @@ describe('When logged in and a blog created', function() {
       cy.get('#username-input').type('test_user')
       cy.get('#password-input').type('testpassword')
       cy.get('#login-button').click()
+
       cy.get('#show-create-blog-div-button').click()
       cy.get('#title-input').type('Test title')
       cy.get('#author-input').type('Test author')
@@ -94,21 +95,46 @@ describe('When logged in and a blog created', function() {
       cy.contains('view').click()
       cy.get('#remove-blog-button').should('be.not.visible')
     })
-
-
-
-
   })
 
 
+describe('When logged in and a several blogs created', function() {
+    beforeEach(function() {
+      cy.get('#username-input').type('test_user')
+      cy.get('#password-input').type('testpassword')
+      cy.get('#login-button').click()
+      
+      // Blog 1
+      cy.get('#show-create-blog-div-button').click()
+      cy.get('#title-input').type('Test title')
+      cy.get('#author-input').type('Test author')
+      cy.get('#url-input').type('Test url')
+      cy.get('#create-blog-button').click()
 
+      // Blog 2
+      cy.get('#show-create-blog-div-button').click()
+      cy.get('#title-input').type('Test title2')
+      cy.get('#author-input').type('Test author2')
+      cy.get('#url-input').type('Test url2')
+      cy.get('#create-blog-button').click()
+    })
 
+    it('Blogs are sorted by likes', function() {
+      cy.get('.view-button').eq(0).click()
+      cy.get('.view-button').eq(1).click()
 
+      cy.get('.blog').eq(0).should('contain', 'Test title')
+      cy.get('.blog').eq(1).should('contain', 'Test title2')
 
+      cy.get('.like-button').eq(0).click()
+      cy.get('.blog').eq(0).contains('likes 1')
 
+      cy.get('.like-button').eq(1).click()
+      cy.get('.blog').eq(1).contains('likes 1')
+      cy.get('.like-button').eq(1).click()
 
-
-
-
-
+      cy.get('.blog').eq(0).should('contain', 'Test title2')
+      cy.get('.blog').eq(1).should('contain', 'Test title')
+    })
+  })
 })

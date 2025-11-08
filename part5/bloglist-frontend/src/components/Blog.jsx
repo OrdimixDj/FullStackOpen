@@ -33,16 +33,16 @@ const Blog = ({ blog, handleBlogUpdate, handleBlogRemove, user }) => {
   }
 
   return(
-    <div style={blogStyle}>
+    <div className='blog' style={blogStyle}>
       <div>
         <div style={hideWhenVisible} className='blog-not-complete'>
-          {blog.title} {blog.author} <button onClick={() => setVisible(true)}>view</button>
+          {blog.title} {blog.author} <button className="view-button" onClick={() => setVisible(true)}>view</button>
         </div>
 
         <div style={showWhenVisible} className='blog-complete'>
           {blog.title} {blog.author} <button onClick={() => setVisible(false)}>hide</button>
           <br/>{blog.url}
-          <br/>likes {blog.likes} <button onClick={increaseLike}>like</button>
+          <br/>likes {blog.likes} <button className="like-button" onClick={increaseLike}>like</button>
           <br/>{blog.user.name}
           <div id='remove-blog-button' style={showWhenSameUser}>
             <button onClick={removeBlog}>remove</button>

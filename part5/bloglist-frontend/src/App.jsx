@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import loginService from './services/login'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
@@ -44,6 +44,8 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [message, setMessage] = useState({content:'', type:''})
+
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -102,6 +104,8 @@ const App = () => {
         setMessage({content:`Error: ${exception.response.data.error}`, type:'error'})
       }
     }
+
+    blogFormRef.current.toggleVisibility()
 
     setTimeout(() => {
       setMessage({content:null, type:null})
@@ -195,7 +199,7 @@ const App = () => {
       <Notification message={message} />
       <h2>blogs</h2>
       <p>{user.name} logged in <button id="logout-button" onClick={disconnectUser}>logout</button></p><br/><br/>
-      <Togglable buttonId="show-create-blog-div-button" buttonLabel="create new blog">
+      <Togglable buttonId="show-create-blog-div-button" buttonLabel="create new blog" ref={blogFormRef}>
         <BlogForm createBlog={createBlog} />
       </Togglable>
       

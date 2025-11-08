@@ -25,11 +25,11 @@ const BlogForm = ({ createBlog }) => {
 
       <form onSubmit={addBlog}>
           <div>
-              title:<input type="text" value={title} name="Title" onChange={({ target }) => setTitle(target.value)}/>
+              title:<input type="text" value={title} name="Title" placeholder='title' onChange={({ target }) => setTitle(target.value)}/>
               <br/>
-              author:<input type="text" value={author} name="Author" onChange={({ target }) => setAuthor(target.value)}/>
+              author:<input type="text" value={author} name="Author" placeholder='author' onChange={({ target }) => setAuthor(target.value)}/>
               <br/>
-              url:<input type="text" value={url} name="Url" onChange={({ target }) => setUrl(target.value)}/>
+              url:<input type="text" value={url} name="Url" placeholder='url' onChange={({ target }) => setUrl(target.value)}/>
           </div>
           <button type="submit">create</button>
         </form>

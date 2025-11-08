@@ -3,22 +3,22 @@ import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
-
-const mockHandler = jest.fn()
+import BlogForm from './BlogForm'
 
 const blog = {
-  title: 'Testing React components with Jest',
-  author: 'Test Writer',
-  url: 'http://testurl.com',
-  likes: 10,
-  user: { name: 'P. Testeur', username: 'testusername' }
-}
-
-const mockUser = { username: 'testusername', name: 'P. Testeur' }
-const handleBlogUpdate = mockHandler
-const handleBlogRemove = mockHandler
+    title: 'Testing React components with Jest',
+    author: 'Test Writer',
+    url: 'http://testurl.com',
+    likes: 10,
+    user: { name: 'P. Testeur', username: 'testusername' }
+  }
 
 test('renders title and author, but hides URL and likes by default', () => {
+  const mockHandler = jest.fn()
+  const mockUser = { username: 'testusername', name: 'P. Testeur' }
+  const handleBlogUpdate = mockHandler
+  const handleBlogRemove = mockHandler
+
   const { container } = render(
     <Blog blog={blog} handleBlogUpdate={handleBlogUpdate} handleBlogRemove={handleBlogRemove} user={mockUser} />
   )
@@ -37,6 +37,11 @@ test('renders title and author, but hides URL and likes by default', () => {
 })
 
 test('clicking the button shows url and likes', async () => {
+  const mockHandler = jest.fn()
+  const mockUser = { username: 'testusername', name: 'P. Testeur' }
+  const handleBlogUpdate = mockHandler
+  const handleBlogRemove = mockHandler
+
   const { container } = render(
     <Blog blog={blog} handleBlogUpdate={handleBlogUpdate} handleBlogRemove={handleBlogRemove} user={mockUser} />
   )
@@ -56,6 +61,11 @@ test('clicking the button shows url and likes', async () => {
 })
 
 test('clicking the likes 2 times calls 2 times mockHandler', async () => {
+  const mockHandler = jest.fn()
+  const mockUser = { username: 'testusername', name: 'P. Testeur' }
+  const handleBlogUpdate = mockHandler
+  const handleBlogRemove = mockHandler
+
   const { container } = render(
     <Blog blog={blog} handleBlogUpdate={handleBlogUpdate} handleBlogRemove={handleBlogRemove} user={mockUser} />
   )
@@ -69,4 +79,34 @@ test('clicking the likes 2 times calls 2 times mockHandler', async () => {
   await user.click(likeButton)
 
   expect(mockHandler.mock.calls).toHaveLength(2)
+})
+
+test('form calls the handler with correct details when a new blog is created', async () => {
+  const createBlog = jest.fn()
+  render(<BlogForm createBlog={createBlog} />)
+
+  const user = userEvent.setup()
+
+  const titleInput = screen.getByPlaceholderText('title')
+  const authorInput = screen.getByPlaceholderText('author')
+  const urlInput = screen.getByPlaceholderText('url')
+
+  await user.type(titleInput, blog.title)
+  await user.type(authorInput, blog.author)
+  await user.type(urlInput, blog.url)
+
+  const sendButton = screen.getByText('create')
+  await user.click(sendButton)
+
+  expect(createBlog.mock.calls).toHaveLength(1)
+  
+  expect(createBlog.mock.calls[0][0]).toEqual({
+    title: 'Testing React components with Jest',
+    author: 'Test Writer',
+    url: 'http://testurl.com'
+  })
+
+  expect(titleInput).toHaveValue('')
+  expect(authorInput).toHaveValue('')
+  expect(urlInput).toHaveValue('')
 })

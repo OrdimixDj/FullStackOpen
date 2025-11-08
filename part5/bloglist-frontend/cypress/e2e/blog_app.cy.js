@@ -49,4 +49,44 @@ describe('Blog app', function() {
       cy.contains('Test title Test author')
     })
   })
+
+describe('When logged in and a blog created', function() {
+    beforeEach(function() {
+      cy.get('#username-input').type('test_user')
+      cy.get('#password-input').type('testpassword')
+      cy.get('#login-button').click()
+      cy.get('#show-create-blog-div-button').click()
+      cy.get('#title-input').type('Test title')
+      cy.get('#author-input').type('Test author')
+      cy.get('#url-input').type('Test url')
+      cy.get('#create-blog-button').click()
+    })
+
+    it('A blog can be liked by user', function() {
+      // At that state of the tests, of course only one blog is created so I can look for his button with the text
+      cy.contains('view').click()
+      cy.contains('likes 0')
+      cy.contains('like').click()
+      cy.contains('likes 1')
+    })
+
+
+
+
+
+
+    
+  })
+
+
+
+
+
+
+
+
+
+
+
+
 })

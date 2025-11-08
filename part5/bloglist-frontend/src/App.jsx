@@ -165,7 +165,7 @@ const App = () => {
           <div>
             username
               <input
-              id="username"
+              id="username-input"
               type="text"
               value={username}
               name="Username"
@@ -175,7 +175,7 @@ const App = () => {
           <div>
             password
               <input
-              id="password"
+              id="password-input"
               type="password"
               value={password}
               name="Password"
@@ -195,7 +195,7 @@ const App = () => {
       <Notification message={message} />
       <h2>blogs</h2>
       <p>{user.name} logged in <button onClick={disconnectUser}>logout</button></p><br/><br/>
-      <Togglable buttonLabel="create new blog">
+      <Togglable buttonId="show-create-blog-div-button" buttonLabel="create new blog">
         <BlogForm createBlog={createBlog} />
       </Togglable>
       

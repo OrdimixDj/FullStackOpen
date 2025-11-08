@@ -27,6 +27,7 @@ describe('Blog app', function() {
 
       cy.contains('Log in to application')
       cy.contains('wrong username or password')
+        .and('have.css', 'color', 'rgb(255, 0, 0)')
     })
   })
 })

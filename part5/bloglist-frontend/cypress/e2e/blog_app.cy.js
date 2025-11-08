@@ -80,6 +80,20 @@ describe('When logged in and a blog created', function() {
       cy.contains('Blog Test title by Test author successfully removed')
     })
 
+    it('Only the creator can see the remove button', function() {
+      cy.contains('view').click()
+      cy.get('#remove-blog-button').should('be.visible')
+      cy.get('#logout-button').click()
+
+      const user = {username: "test_user2", name: "TEST2", password: "testpassword2"}
+      cy.request('POST', 'http://localhost:3003/api/users', user)
+      cy.get('#username-input').type('test_user2')
+      cy.get('#password-input').type('testpassword2')
+      cy.get('#login-button').click()
+
+      cy.contains('view').click()
+      cy.get('#remove-blog-button').should('be.not.visible')
+    })
 
 
 

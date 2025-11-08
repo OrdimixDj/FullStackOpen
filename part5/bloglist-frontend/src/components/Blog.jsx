@@ -44,7 +44,7 @@ const Blog = ({ blog, handleBlogUpdate, handleBlogRemove, user }) => {
           <br/>{blog.url}
           <br/>likes {blog.likes} <button onClick={increaseLike}>like</button>
           <br/>{blog.user.name}
-          <div style={showWhenSameUser}>
+          <div id='remove-blog-button' style={showWhenSameUser}>
             <button onClick={removeBlog}>remove</button>
           </div>
 

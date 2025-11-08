@@ -32,8 +32,6 @@ const Blog = ({ blog, handleBlogUpdate, handleBlogRemove, user }) => {
     }
   }
 
-  const viewButtonId = 'view-button-' + blog.
-
   return(
     <div style={blogStyle}>
       <div>

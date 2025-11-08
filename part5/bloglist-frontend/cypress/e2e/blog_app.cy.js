@@ -70,12 +70,20 @@ describe('When logged in and a blog created', function() {
       cy.contains('likes 1')
     })
 
+    it('A blog can be removed by user who created it', function() {
+      // At that state of the tests, of course only one blog is created so I can look for his button with the text
+      cy.contains('view').click()
+      cy.contains('remove').click()
+      cy.on('window:confirm', () => true)
+
+      cy.get('html').should('not.contain', 'Test title Test author')
+      cy.contains('Blog Test title by Test author successfully removed')
+    })
 
 
 
 
 
-    
   })
 
 

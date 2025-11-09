@@ -1,9 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
+import { getAnecdotes } from './requests'
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
-import { getAnecdotes } from './requests'
-
 
 const App = () => {
   const handleVote = (anecdote) => {
@@ -26,7 +24,6 @@ const App = () => {
   }
 
   const anecdotes = result.data
-
 
   return (
     <div>

@@ -67,13 +67,13 @@ const CreateNew = (props) => {
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0
     })
     navigate('/')
-    props.setNotification(`a new anecdote ${content} created!`)
+    props.setNotification(`a new anecdote ${content.value} created!`)
     
     setTimeout(() => {
       props.setNotification('')
@@ -94,9 +94,9 @@ const CreateNew = (props) => {
         </div>
         <div>
           url for more info
-          <input name='info' {...url} />
+          <input name='info' {...info} />
         </div>
-        <button>create</button>
+        <button>create</button><button>reset</button>
       </form>
     </div>
   )

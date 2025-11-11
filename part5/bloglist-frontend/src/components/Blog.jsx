@@ -27,12 +27,12 @@ const Blog = ({ blog, handleBlogUpdate, handleBlogRemove, user }) => {
   const removeBlog = event => {
     event.preventDefault()
 
-    if(window.confirm('Remove blog ' + blog.title + ' by ' + blog.author)) {
+    if (window.confirm('Remove blog ' + blog.title + ' by ' + blog.author)) {
       handleBlogRemove(blog)
     }
   }
 
-  return(
+  return (
     <div className='blog' style={blogStyle}>
       <div>
         <div style={hideWhenVisible} className='blog-not-complete'>
@@ -41,16 +41,16 @@ const Blog = ({ blog, handleBlogUpdate, handleBlogRemove, user }) => {
 
         <div style={showWhenVisible} className='blog-complete'>
           {blog.title} {blog.author} <button onClick={() => setVisible(false)}>hide</button>
-          <br/>{blog.url}
-          <br/>likes {blog.likes} <button className="like-button" onClick={increaseLike}>like</button>
-          <br/>{blog.user.name}
+          <br />{blog.url}
+          <br />likes {blog.likes} <button className="like-button" onClick={increaseLike}>like</button>
+          <br />{blog.user.name}
           <div id='remove-blog-button' style={showWhenSameUser}>
             <button onClick={removeBlog}>remove</button>
           </div>
 
         </div>
       </div>
-    </div> 
+    </div>
   )
 }
 

@@ -23,11 +23,10 @@ const Notification = ({ message }) => {
     return null
   }
 
-  if(message.type == 'error') {
+  if (message.type == 'error') {
     messageStyle.color = 'red'
   }
-  else
-  {
+  else {
     messageStyle.color = 'green'
   }
 
@@ -43,25 +42,25 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [message, setMessage] = useState({content:'', type:''})
+  const [message, setMessage] = useState({ content: '', type: '' })
 
   const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+      setBlogs(blogs)
+    )
   }, [])
 
   const handleBlogUpdate = async (updatedBlog) => {
     try {
-      blogService.update(updatedBlog)
+      await blogService.update(updatedBlog)
       setBlogs(blogs.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog))
     } catch (exception) {
-      setMessage({content:`Unable to like that blog. Exact error: ${exception.response.data.error}`, type:'error'})
+      setMessage({ content: `Unable to like that blog. Exact error: ${exception.response.data.error}`, type: 'error' })
 
       setTimeout(() => {
-        setMessage({content:null, type:null})
+        setMessage({ content: null, type: null })
       }, 5000)
     }
   }
@@ -70,13 +69,13 @@ const App = () => {
     try {
       blogService.remove(blogToDelete)
       setBlogs(blogs.filter(blog => blog.id !== blogToDelete.id))
-      setMessage({content:`Blog ${blogToDelete.title} by ${blogToDelete.author} successfully removed`, type:'other'})
+      setMessage({ content: `Blog ${blogToDelete.title} by ${blogToDelete.author} successfully removed`, type: 'other' })
     } catch (exception) {
-      setMessage({content:`Unable to remove that blog. Exact error: ${exception.response.data.error}`, type:'error'})
+      setMessage({ content: `Unable to remove that blog. Exact error: ${exception.response.data.error}`, type: 'error' })
     }
 
     setTimeout(() => {
-        setMessage({content:null, type:null})
+      setMessage({ content: null, type: null })
     }, 5000)
   }
 
@@ -94,27 +93,27 @@ const App = () => {
       const returnedBlog = await blogService.create(blogObject)
       returnedBlog.user = user
       setBlogs(blogs.concat(returnedBlog))
-      setMessage({content:`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`, type:'other'})
+      setMessage({ content: `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`, type: 'other' })
     } catch (exception) {
       const statusCode = exception.response.status
 
       if (statusCode === 400) {
-        setMessage({content:`Bad request: title and url are required`, type:'error'})
+        setMessage({ content: `Bad request: title and url are required`, type: 'error' })
       } else {
-        setMessage({content:`Error: ${exception.response.data.error}`, type:'error'})
+        setMessage({ content: `Error: ${exception.response.data.error}`, type: 'error' })
       }
     }
 
     blogFormRef.current.toggleVisibility()
 
     setTimeout(() => {
-      setMessage({content:null, type:null})
+      setMessage({ content: null, type: null })
     }, 5000)
   }
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    
+
     try {
       const user = await loginService.login({
         username, password,
@@ -122,40 +121,38 @@ const App = () => {
 
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
-      ) 
+      )
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
-    } catch (exception)
-    {
+    } catch (exception) {
       const statusCode = exception.response.status
 
       if (statusCode === 401) {
-          setMessage({content:`wrong username or password`, type:'error'})
+        setMessage({ content: `wrong username or password`, type: 'error' })
       } else {
-          setMessage({content:`Error: ${exception.response.data.error}`, type:'error'})
+        setMessage({ content: `Error: ${exception.response.data.error}`, type: 'error' })
       }
-      
+
       setTimeout(() => {
-          setMessage({content:null, type:null})
+        setMessage({ content: null, type: null })
       }, 5000)
     }
   }
 
   const disconnectUser = async (event) => {
     event.preventDefault()
-    
+
     try {
       window.localStorage.removeItem('loggedBlogappUser')
       blogService.setToken(null)
       setUser(null)
-    } catch (exception)
-    {
-      setMessage({content:`Error: ${exception.response.data.error}`, type:'error'})
+    } catch (exception) {
+      setMessage({ content: `Error: ${exception.response.data.error}`, type: 'error' })
 
       setTimeout(() => {
-          setMessage({content:null, type:null})
+        setMessage({ content: null, type: null })
       }, 5000)
     }
   }
@@ -168,7 +165,7 @@ const App = () => {
         <form onSubmit={handleLogin}>
           <div>
             username
-              <input
+            <input
               id="username-input"
               type="text"
               value={username}
@@ -178,7 +175,7 @@ const App = () => {
           </div>
           <div>
             password
-              <input
+            <input
               id="password-input"
               type="password"
               value={password}
@@ -187,7 +184,7 @@ const App = () => {
             />
           </div>
           <button id="login-button" type="submit">login</button>
-        </form>      
+        </form>
       </div>
     )
   }
@@ -198,11 +195,11 @@ const App = () => {
     <div>
       <Notification message={message} />
       <h2>blogs</h2>
-      <p>{user.name} logged in <button id="logout-button" onClick={disconnectUser}>logout</button></p><br/><br/>
+      <p>{user.name} logged in <button id="logout-button" onClick={disconnectUser}>logout</button></p><br /><br />
       <Togglable buttonId="show-create-blog-div-button" buttonLabel="create new blog" ref={blogFormRef}>
         <BlogForm createBlog={createBlog} />
       </Togglable>
-      
+
       {sortedBlogs.map(blog =>
         <Blog key={blog.id} blog={blog} handleBlogUpdate={handleBlogUpdate} handleBlogRemove={handleBlogRemove} user={user} />
       )}

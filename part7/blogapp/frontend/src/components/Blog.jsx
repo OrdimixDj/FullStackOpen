@@ -1,16 +1,19 @@
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { likeBlog, deleteBlog } from '../reducers/blogReducer'
 import { setNotification } from '../reducers/notificationReducer'
 
-const Blog = ({ blog, handleBlogUpdate, handleBlogRemove, user }) => {
+const Blog = ({ blog }) => {
   const dispatch = useDispatch()
 
   const [visible, setVisible] = useState(false)
+  const user = useSelector((state) => state.user)
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
   const showWhenSameUser = {
-    display: user.username === blog.user.username ? '' : 'none',
+    display:
+      user && blog.user && user.username === blog.user.username ? '' : 'none',
   }
 
   const blogStyle = {
@@ -21,27 +24,52 @@ const Blog = ({ blog, handleBlogUpdate, handleBlogRemove, user }) => {
     marginBottom: 5,
   }
 
-  const increaseLike = (event) => {
+  const increaseLike = async (event) => {
     event.preventDefault()
-    const updatedBlog = {
-      ...blog,
-      likes: blog.likes + 1,
+
+    try {
+      dispatch(likeBlog(blog))
+      dispatch(
+        setNotification(
+          `Blog ${blog.title} by ${blog.author} successfully voted`,
+          'other',
+          5,
+        ),
+      )
+    } catch (exception) {
+      dispatch(
+        setNotification(
+          `Unable to like that blog. Exact error: ${exception.response.data.error}`,
+          'error',
+          5,
+        ),
+      )
     }
-    handleBlogUpdate(updatedBlog)
-    dispatch(
-      setNotification(
-        `Blog ${updatedBlog.title} by ${updatedBlog.author} successfully voted`,
-        'other',
-        5,
-      ),
-    )
   }
 
-  const removeBlog = (event) => {
+  const removeBlog = async (event) => {
     event.preventDefault()
 
     if (window.confirm('Remove blog ' + blog.title + ' by ' + blog.author)) {
-      handleBlogRemove(blog)
+      try {
+        dispatch(deleteBlog(blog))
+
+        dispatch(
+          setNotification(
+            `Blog ${blog.title} by ${blog.author} successfully removed`,
+            'other',
+            5,
+          ),
+        )
+      } catch (exception) {
+        dispatch(
+          setNotification(
+            `Unable to remove that blog. Exact error: ${exception.response.data.error}`,
+            'error',
+            5,
+          ),
+        )
+      }
     }
   }
 

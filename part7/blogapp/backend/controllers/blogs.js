@@ -79,8 +79,6 @@ blogRouter.put(
   middleware.userExtractor,
   async (request, response, next) => {
     const { title, author, url, likes } = request.body
-    const user = request.user
-
     const blog = await Blog.findById(request.params.id)
 
     if (!blog) {
@@ -92,7 +90,6 @@ blogRouter.put(
       blog.author = author
       blog.url = url
       blog.likes = likes
-      blog.user = user
 
       const updatedBlog = await blog.save()
       response.json(updatedBlog)

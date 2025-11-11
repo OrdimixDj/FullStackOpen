@@ -2,11 +2,11 @@ import { useSelector, useDispatch } from 'react-redux'
 import { voteAnecdote } from '../reducers/anecdoteReducer'
 import { setNotification } from '../reducers/notificationReducer'
 
-const AnecdoteForm = () => {
+const AnecdoteList = () => {
   const anecdotes = useSelector(state => state.anecdotes)
   const filter = useSelector(state => state.filter)
   const dispatch = useDispatch()
-  
+
   const handleVoteAnecdote = anecdote => {
     dispatch(voteAnecdote(anecdote))
     console.log('vote', anecdote.id)
@@ -31,4 +31,4 @@ const AnecdoteForm = () => {
   )
 }
 
-export default AnecdoteForm
+export default AnecdoteList

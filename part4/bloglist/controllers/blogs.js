@@ -8,7 +8,7 @@ blogRouter.get('/', async (request, response, next) => {
   try {
     const blogs = await Blog.find({}).populate('user')
     response.json(blogs)
-  } catch(exception) {
+  } catch (exception) {
     next(exception)
   }
 })
@@ -30,7 +30,7 @@ blogRouter.post('/', middleware.tokenExtractor, middleware.userExtractor, async 
     user.blogs = user.blogs.concat(savedBlog._id)
     await user.save()
     response.status(201).json(savedBlog)
-  } catch(exception) {
+  } catch (exception) {
     next(exception)
   }
 })
@@ -52,23 +52,20 @@ blogRouter.delete('/:id', middleware.tokenExtractor, middleware.userExtractor, a
 
       return response.status(204).end()
     }
-    else
-    {
+    else {
       return response.status(401).json({ error: 'this user is not the blog creator' })
     }
-  } catch(exception) {
+  } catch (exception) {
     next(exception)
   }
 })
 
 blogRouter.put('/:id', middleware.tokenExtractor, middleware.userExtractor, async (request, response, next) => {
   const { title, author, url, likes } = request.body
-  const user = request.user
-
   const blog = await Blog.findById(request.params.id)
 
   if (!blog) {
-      return response.status(404).end()
+    return response.status(404).end()
   }
 
   try {
@@ -76,12 +73,11 @@ blogRouter.put('/:id', middleware.tokenExtractor, middleware.userExtractor, asyn
     blog.author = author
     blog.url = url
     blog.likes = likes
-    blog.user = user
 
     const updatedBlog = await blog.save()
     response.json(updatedBlog)
 
-  } catch(exception) {
+  } catch (exception) {
     next(exception)
   }
 })

@@ -1,18 +1,55 @@
 import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { createBlog } from '../reducers/blogReducer'
+import { setNotification } from '../reducers/notificationReducer'
 import PropTypes from 'prop-types'
 
-const BlogForm = ({ createBlog }) => {
+const BlogForm = ({ blogFormRef }) => {
+  const dispatch = useDispatch()
+
+  const user = useSelector((state) => state.user)
+
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
-  const addBlog = (event) => {
+  const addBlog = async (event) => {
     event.preventDefault()
-    createBlog({
+
+    const newBlog = {
       title: title,
       author: author,
       url: url,
-    })
+    }
+
+    try {
+      dispatch(createBlog(newBlog, user))
+      dispatch(
+        setNotification(`a new blog ${title} by ${author} added`, 'other', 5),
+      )
+    } catch (exception) {
+      const statusCode = exception.response.status
+
+      if (statusCode === 400) {
+        dispatch(
+          setNotification(
+            `Bad request: title and url are required`,
+            'error',
+            5,
+          ),
+        )
+      } else {
+        dispatch(
+          setNotification(
+            `Error: ${exception.response.data.error}`,
+            'error',
+            5,
+          ),
+        )
+      }
+    }
+
+    blogFormRef.current.toggleVisibility()
 
     setTitle('')
     setAuthor('')
@@ -64,7 +101,7 @@ const BlogForm = ({ createBlog }) => {
 }
 
 BlogForm.propTypes = {
-  createBlog: PropTypes.func.isRequired,
+  handleCreateBlog: PropTypes.func.isRequired,
 }
 
 export default BlogForm

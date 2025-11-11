@@ -1,12 +1,15 @@
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
+import { initializeUsersList } from './reducers/usersListReducer'
 import { initializeUser } from './reducers/userReducer'
+import { Routes, Route } from 'react-router-dom'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 import Login from './components/Login'
 import Notification from './components/Notification'
 import BlogList from './components/BlogList'
+import UsersList from './components/UsersList'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -18,6 +21,7 @@ const App = () => {
   useEffect(() => {
     dispatch(initializeBlogs())
     dispatch(initializeUser())
+    dispatch(initializeUsersList())
   }, [])
 
   if (!user.token) {
@@ -37,15 +41,27 @@ const App = () => {
 
       <br />
       <br />
-      <Togglable
-        buttonId="show-create-blog-div-button"
-        buttonLabel="create new blog"
-        ref={blogFormRef}
-      >
-        <BlogForm blogFormRef={blogFormRef} />
-      </Togglable>
 
-      <BlogList />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <Togglable
+                buttonId="show-create-blog-div-button"
+                buttonLabel="create new blog"
+                ref={blogFormRef}
+              >
+                <BlogForm blogFormRef={blogFormRef} />
+              </Togglable>
+
+              <BlogList />
+            </>
+          }
+        />
+
+        <Route path="/users" element={<UsersList />} />
+      </Routes>
     </div>
   )
 }

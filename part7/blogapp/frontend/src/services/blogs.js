@@ -38,7 +38,7 @@ const remove = async (blog) => {
 
 const getAll = () => {
   const request = axios.get(baseUrl)
-  return request.then(response => response.data)
+  return request.then((response) => response.data)
 }
 
 export default { setToken, create, getAll, update, remove }

@@ -6,12 +6,12 @@ import Blog from './Blog'
 import BlogForm from './BlogForm'
 
 const blog = {
-    title: 'Testing React components with Jest',
-    author: 'Test Writer',
-    url: 'http://testurl.com',
-    likes: 10,
-    user: { name: 'P. Testeur', username: 'testusername' }
-  }
+  title: 'Testing React components with Jest',
+  author: 'Test Writer',
+  url: 'http://testurl.com',
+  likes: 10,
+  user: { name: 'P. Testeur', username: 'testusername' },
+}
 
 test('renders title and author, but hides URL and likes by default', () => {
   const mockHandler = jest.fn()
@@ -20,10 +20,17 @@ test('renders title and author, but hides URL and likes by default', () => {
   const handleBlogRemove = mockHandler
 
   const { container } = render(
-    <Blog blog={blog} handleBlogUpdate={handleBlogUpdate} handleBlogRemove={handleBlogRemove} user={mockUser} />
+    <Blog
+      blog={blog}
+      handleBlogUpdate={handleBlogUpdate}
+      handleBlogRemove={handleBlogRemove}
+      user={mockUser}
+    />,
   )
 
-  const titleAndAuthor = screen.getByText('Testing React components with Jest Test Writer')
+  const titleAndAuthor = screen.getByText(
+    'Testing React components with Jest Test Writer',
+  )
   expect(titleAndAuthor).toBeDefined()
 
   const hiddenDetails = container.querySelector('.blog-complete')
@@ -43,7 +50,12 @@ test('clicking the button shows url and likes', async () => {
   const handleBlogRemove = mockHandler
 
   const { container } = render(
-    <Blog blog={blog} handleBlogUpdate={handleBlogUpdate} handleBlogRemove={handleBlogRemove} user={mockUser} />
+    <Blog
+      blog={blog}
+      handleBlogUpdate={handleBlogUpdate}
+      handleBlogRemove={handleBlogRemove}
+      user={mockUser}
+    />,
   )
 
   const user = userEvent.setup()
@@ -67,7 +79,12 @@ test('clicking the likes 2 times calls 2 times mockHandler', async () => {
   const handleBlogRemove = mockHandler
 
   const { container } = render(
-    <Blog blog={blog} handleBlogUpdate={handleBlogUpdate} handleBlogRemove={handleBlogRemove} user={mockUser} />
+    <Blog
+      blog={blog}
+      handleBlogUpdate={handleBlogUpdate}
+      handleBlogRemove={handleBlogRemove}
+      user={mockUser}
+    />,
   )
 
   const user = userEvent.setup()
@@ -99,11 +116,11 @@ test('form calls the handler with correct details when a new blog is created', a
   await user.click(sendButton)
 
   expect(createBlog.mock.calls).toHaveLength(1)
-  
+
   expect(createBlog.mock.calls[0][0]).toEqual({
     title: 'Testing React components with Jest',
     author: 'Test Writer',
-    url: 'http://testurl.com'
+    url: 'http://testurl.com',
   })
 
   expect(titleInput).toHaveValue('')

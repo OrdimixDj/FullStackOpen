@@ -10,12 +10,16 @@ usersRouter.get('/', async (request, response) => {
 usersRouter.post('/', async (request, response) => {
   const { username, name, password } = request.body
 
-  if(!password || !username) {
+  if (!password || !username) {
     return response.status(400).send({ error: 'password must be specified!!!' })
   }
 
-  if(username.length < 3 || password.length < 3) {
-    return response.status(400).send({ error: 'username and password must content at least 3 caracters!!!' })
+  if (username.length < 3 || password.length < 3) {
+    return response
+      .status(400)
+      .send({
+        error: 'username and password must content at least 3 caracters!!!',
+      })
   }
 
   const saltRounds = 10

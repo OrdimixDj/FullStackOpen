@@ -1,47 +1,19 @@
 import { useState, useEffect, useRef } from 'react'
+import { useDispatch } from 'react-redux'
 import loginService from './services/login'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
-
-const Notification = ({ message }) => {
-  const messageStyle = {
-    background: 'lightgrey',
-    fontSize: 20,
-    borderStyle: 'solid',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-  }
-
-  if (message.content === null) {
-    return null
-  }
-
-  if (message.content === '') {
-    return null
-  }
-
-  if (message.type == 'error') {
-    messageStyle.color = 'red'
-  } else {
-    messageStyle.color = 'green'
-  }
-
-  return (
-    <div style={messageStyle}>
-      <b>{message.content}</b>
-    </div>
-  )
-}
+import Notification from './components/Notification'
+import { setNotification } from './reducers/notificationReducer'
 
 const App = () => {
+  const dispatch = useDispatch()
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [message, setMessage] = useState({ content: '', type: '' })
 
   const blogFormRef = useRef()
 
@@ -56,14 +28,13 @@ const App = () => {
         blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog)),
       )
     } catch (exception) {
-      setMessage({
-        content: `Unable to like that blog. Exact error: ${exception.response.data.error}`,
-        type: 'error',
-      })
-
-      setTimeout(() => {
-        setMessage({ content: null, type: null })
-      }, 5000)
+      dispatch(
+        setNotification(
+          `Unable to like that blog. Exact error: ${exception.response.data.error}`,
+          'error',
+          5,
+        ),
+      )
     }
   }
 
@@ -71,20 +42,22 @@ const App = () => {
     try {
       blogService.remove(blogToDelete)
       setBlogs(blogs.filter((blog) => blog.id !== blogToDelete.id))
-      setMessage({
-        content: `Blog ${blogToDelete.title} by ${blogToDelete.author} successfully removed`,
-        type: 'other',
-      })
+      dispatch(
+        setNotification(
+          `Blog ${blogToDelete.title} by ${blogToDelete.author} successfully removed`,
+          'other',
+          5,
+        ),
+      )
     } catch (exception) {
-      setMessage({
-        content: `Unable to remove that blog. Exact error: ${exception.response.data.error}`,
-        type: 'error',
-      })
+      dispatch(
+        setNotification(
+          `Unable to remove that blog. Exact error: ${exception.response.data.error}`,
+          'error',
+          5,
+        ),
+      )
     }
-
-    setTimeout(() => {
-      setMessage({ content: null, type: null })
-    }, 5000)
   }
 
   useEffect(() => {
@@ -101,31 +74,37 @@ const App = () => {
       const returnedBlog = await blogService.create(blogObject)
       returnedBlog.user = user
       setBlogs(blogs.concat(returnedBlog))
-      setMessage({
-        content: `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`,
-        type: 'other',
-      })
+
+      dispatch(
+        setNotification(
+          `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`,
+          'other',
+          5,
+        ),
+      )
     } catch (exception) {
       const statusCode = exception.response.status
 
       if (statusCode === 400) {
-        setMessage({
-          content: `Bad request: title and url are required`,
-          type: 'error',
-        })
+        dispatch(
+          setNotification(
+            `Bad request: title and url are required`,
+            'error',
+            5,
+          ),
+        )
       } else {
-        setMessage({
-          content: `Error: ${exception.response.data.error}`,
-          type: 'error',
-        })
+        dispatch(
+          setNotification(
+            `Error: ${exception.response.data.error}`,
+            'error',
+            5,
+          ),
+        )
       }
     }
 
     blogFormRef.current.toggleVisibility()
-
-    setTimeout(() => {
-      setMessage({ content: null, type: null })
-    }, 5000)
   }
 
   const handleLogin = async (event) => {
@@ -146,17 +125,16 @@ const App = () => {
       const statusCode = exception.response.status
 
       if (statusCode === 401) {
-        setMessage({ content: `wrong username or password`, type: 'error' })
+        dispatch(setNotification(`wrong username or password`, 'error', 5))
       } else {
-        setMessage({
-          content: `Error: ${exception.response.data.error}`,
-          type: 'error',
-        })
+        dispatch(
+          setNotification(
+            `Error: ${exception.response.data.error}`,
+            'error',
+            5,
+          ),
+        )
       }
-
-      setTimeout(() => {
-        setMessage({ content: null, type: null })
-      }, 5000)
     }
   }
 
@@ -168,14 +146,9 @@ const App = () => {
       blogService.setToken(null)
       setUser(null)
     } catch (exception) {
-      setMessage({
-        content: `Error: ${exception.response.data.error}`,
-        type: 'error',
-      })
-
-      setTimeout(() => {
-        setMessage({ content: null, type: null })
-      }, 5000)
+      dispatch(
+        setNotification(`Error: ${exception.response.data.error}`, 'error', 5),
+      )
     }
   }
 
@@ -183,7 +156,7 @@ const App = () => {
     return (
       <div>
         <h2>Log in to application</h2>
-        <Notification message={message} />
+        <Notification />
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -219,7 +192,7 @@ const App = () => {
 
   return (
     <div>
-      <Notification message={message} />
+      <Notification />
       <h2>blogs</h2>
       <p>
         {user.name} logged in{' '}

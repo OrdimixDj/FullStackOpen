@@ -10,7 +10,7 @@ const User = require('../models/user')
 beforeEach(async () => {
   await User.deleteMany({})
   const passwordHash = await bcrypt.hash('sekret', 10)
-  const user = new User({username: 'root1', passwordHash})
+  const user = new User({ username: 'root1', passwordHash })
   await user.save()
 
   const userBlogs = []
@@ -50,15 +50,15 @@ describe('when there is initially some blogs saved', () => {
 describe('addition of a new blog', () => {
   test('a valid blog can be added with valid token', async () => {
     const user = {
-      username: 'root1', 
-      password: 'sekret'
+      username: 'root1',
+      password: 'sekret',
     }
 
     const loginResponse = await api
-                                  .post('/api/login')
-                                  .send(user)
-                                  .expect(200)
-                                  .expect('Content-Type', /application\/json/)
+      .post('/api/login')
+      .send(user)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
 
     const token = loginResponse.body.token
 
@@ -66,7 +66,7 @@ describe('addition of a new blog', () => {
       title: 'Title test',
       author: 'Author test',
       url: 'Url test',
-      likes: 0
+      likes: 0,
     }
 
     await api
@@ -79,43 +79,37 @@ describe('addition of a new blog', () => {
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
 
-    const titles = blogsAtEnd.map(b => b.title)
-    expect(titles).toContain(
-      'Title test'
-    )
+    const titles = blogsAtEnd.map((b) => b.title)
+    expect(titles).toContain('Title test')
 
-    const authors = blogsAtEnd.map(b => b.author)
-    expect(authors).toContain(
-      'Author test'
-    )
+    const authors = blogsAtEnd.map((b) => b.author)
+    expect(authors).toContain('Author test')
 
-    const urls = blogsAtEnd.map(b => b.url)
-    expect(urls).toContain(
-      'Url test'
-    )
+    const urls = blogsAtEnd.map((b) => b.url)
+    expect(urls).toContain('Url test')
 
-    const totLikes = blogsAtEnd.map(b => b.likes)
+    const totLikes = blogsAtEnd.map((b) => b.likes)
     expect(totLikes).toContain(0)
   })
 
   test('works if likes is missing, with default value 0', async () => {
     const user = {
-      username: 'root1', 
-      password: 'sekret'
+      username: 'root1',
+      password: 'sekret',
     }
 
     const loginResponse = await api
-                                  .post('/api/login')
-                                  .send(user)
-                                  .expect(200)
-                                  .expect('Content-Type', /application\/json/)
+      .post('/api/login')
+      .send(user)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
 
     const token = loginResponse.body.token
 
     const newBlog = {
       title: 'Title test',
       author: 'Author test',
-      url: 'Url test'
+      url: 'Url test',
     }
 
     await api
@@ -127,34 +121,34 @@ describe('addition of a new blog', () => {
 
     const blogsAtEnd = await helper.blogsInDb()
 
-    const likes = blogsAtEnd.map(b => b.likes)
+    const likes = blogsAtEnd.map((b) => b.likes)
     expect(likes).toContain(0) // 0 is supposed to be associated to that blog because the other blogs have 7 & 5 likes
   })
 
   test('fails with status code 400 if title or url missing', async () => {
     const user = {
-      username: 'root1', 
-      password: 'sekret'
+      username: 'root1',
+      password: 'sekret',
     }
 
     const loginResponse = await api
-                                  .post('/api/login')
-                                  .send(user)
-                                  .expect(200)
-                                  .expect('Content-Type', /application\/json/)
+      .post('/api/login')
+      .send(user)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
 
     const token = loginResponse.body.token
 
     const blogWithoutTitle = {
       author: 'Author test',
       url: 'Url test',
-      likes: 0
+      likes: 0,
     }
 
     const blogWithoutUrl = {
       title: 'Title test',
       author: 'Author test',
-      likes: 0
+      likes: 0,
     }
 
     await api
@@ -174,15 +168,15 @@ describe('addition of a new blog', () => {
 describe('deletion of a blog', () => {
   test('succeeds with status code 204 if it is valid', async () => {
     const user = {
-      username: 'root1', 
-      password: 'sekret'
+      username: 'root1',
+      password: 'sekret',
     }
 
     const loginResponse = await api
-                                  .post('/api/login')
-                                  .send(user)
-                                  .expect(200)
-                                  .expect('Content-Type', /application\/json/)
+      .post('/api/login')
+      .send(user)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
 
     const token = loginResponse.body.token
 
@@ -198,16 +192,16 @@ describe('deletion of a blog', () => {
 
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
 
-    const titles = blogsAtEnd.map(b => b.title)
+    const titles = blogsAtEnd.map((b) => b.title)
     expect(titles).not.toContain(blogToDelete.title)
 
-    const authors = blogsAtEnd.map(b => b.author)
+    const authors = blogsAtEnd.map((b) => b.author)
     expect(authors).not.toContain(blogToDelete.author)
 
-    const urls = blogsAtEnd.map(b => b.url)
+    const urls = blogsAtEnd.map((b) => b.url)
     expect(urls).not.toContain(blogToDelete.url)
 
-    const likes = blogsAtEnd.map(b => b.likes)
+    const likes = blogsAtEnd.map((b) => b.likes)
     expect(likes).not.toContain(blogToDelete.likes)
   })
 })

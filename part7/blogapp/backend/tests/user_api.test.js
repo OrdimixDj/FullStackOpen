@@ -34,7 +34,7 @@ describe('when there is initially one user in db', () => {
     const usersAtEnd = await helper.usersInDb()
     expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
 
-    const usernames = usersAtEnd.map(u => u.username)
+    const usernames = usersAtEnd.map((u) => u.username)
     expect(usernames).toContain(newUser.username)
   })
 
@@ -44,20 +44,14 @@ describe('when there is initially one user in db', () => {
       password: 'salainen',
     }
 
-    await api
-      .post('/api/users')
-      .send(newUser)
-      .expect(400)
+    await api.post('/api/users').send(newUser).expect(400)
 
     const newSecondUser = {
       username: 'root',
       name: 'Matti Luukkainen',
     }
 
-    await api
-      .post('/api/users')
-      .send(newSecondUser)
-      .expect(400)
+    await api.post('/api/users').send(newSecondUser).expect(400)
   })
 
   test('creation fails with less than 3 caracters username or password', async () => {
@@ -67,10 +61,7 @@ describe('when there is initially one user in db', () => {
       password: 'salainen',
     }
 
-    await api
-      .post('/api/users')
-      .send(newUser)
-      .expect(400)
+    await api.post('/api/users').send(newUser).expect(400)
 
     const newSecondUser = {
       username: 'root',
@@ -78,10 +69,7 @@ describe('when there is initially one user in db', () => {
       password: 'ab',
     }
 
-    await api
-      .post('/api/users')
-      .send(newSecondUser)
-      .expect(400)
+    await api.post('/api/users').send(newSecondUser).expect(400)
   })
 
   test('creation fails with a non-unique username', async () => {
@@ -91,10 +79,7 @@ describe('when there is initially one user in db', () => {
       password: 'salainen',
     }
 
-    await api
-      .post('/api/users')
-      .send(newUser)
-      .expect(400)
+    await api.post('/api/users').send(newUser).expect(400)
   })
 })
 

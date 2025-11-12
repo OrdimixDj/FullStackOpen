@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { Routes, Route, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 const UsersList = () => {
   const users = useSelector((state) => state.users)

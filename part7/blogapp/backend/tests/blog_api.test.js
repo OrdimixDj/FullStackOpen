@@ -211,10 +211,24 @@ describe('update a blog', () => {
     const blogsAtStart = await helper.blogsInDb()
     const blogToUpdate = blogsAtStart[0]
 
+    const user = {
+      username: 'root1',
+      password: 'sekret',
+    }
+
+    const loginResponse = await api
+      .post('/api/login')
+      .send(user)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const token = loginResponse.body.token
+
     blogToUpdate.likes = 29
 
     await api
       .put(`/api/blogs/${blogToUpdate.id}`)
+      .set('Authorization', `Bearer ${token}`)
       .send(blogToUpdate)
       .expect(200)
 
@@ -225,6 +239,19 @@ describe('update a blog', () => {
   })
 
   test('completely update a blog', async () => {
+    const user = {
+      username: 'root1',
+      password: 'sekret',
+    }
+
+    const loginResponse = await api
+      .post('/api/login')
+      .send(user)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const token = loginResponse.body.token
+
     const blogsAtStart = await helper.blogsInDb()
     const blogToUpdate = blogsAtStart[0]
 
@@ -235,6 +262,7 @@ describe('update a blog', () => {
 
     await api
       .put(`/api/blogs/${blogToUpdate.id}`)
+      .set('Authorization', `Bearer ${token}`)
       .send(blogToUpdate)
       .expect(200)
 

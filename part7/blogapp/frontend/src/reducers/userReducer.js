@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { setNotification } from '../reducers/notificationReducer'
 
 const initialState = {
   token: '',
@@ -23,28 +24,59 @@ export const { setUser, clearUser } = userReducer.actions
 
 export const initializeUser = () => {
   return async (dispatch) => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      dispatch(setUser(user))
+    try {
+      const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+      if (loggedUserJSON) {
+        const user = JSON.parse(loggedUserJSON)
+        dispatch(setUser(user))
+      }
+    } catch (exception) {
+      dispatch(
+        setNotification(
+          `Unable to get user data. Exact error: ${exception.response.data.error}`,
+          'error',
+          5,
+        ),
+      )
     }
   }
 }
 
 export const changeUser = (user) => {
   return async (dispatch) => {
-    window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-    dispatch(setUser(user))
+    try {
+      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
+      dispatch(setUser(user))
+    } catch (exception) {
+      dispatch(
+        setNotification(
+          `Unable to set user data in browser. Exact error: ${exception.response.data.error}`,
+          'error',
+          5,
+        ),
+      )
+    }
   }
 }
 
 export const disconnectUser = () => {
   return async (dispatch) => {
-    window.localStorage.setItem(
-      'loggedBlogappUser',
-      JSON.stringify(initialState),
-    )
-    dispatch(clearUser())
+    try {
+      window.localStorage.setItem(
+        'loggedBlogappUser',
+        JSON.stringify(initialState),
+      )
+      dispatch(clearUser())
+      dispatch(setNotification(`User successfully logged out.`, 'success', 5))
+    } catch (exception) {
+      dispatch(
+        setNotification(
+          `Unable to disconnect user. Exact error: ${exception.response.data.error}`,
+          'error',
+          5,
+        ),
+      )
+    }
   }
 }
 

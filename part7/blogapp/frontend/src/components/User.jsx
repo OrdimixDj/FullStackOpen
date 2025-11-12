@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux'
+import { Table } from 'react-bootstrap'
 import { useParams } from 'react-router-dom'
 
 const User = () => {
@@ -14,11 +15,20 @@ const User = () => {
     <>
       <h1>{user.name}</h1>
       <h2>added blogs</h2>
-      <ul>
-        {user.blogs.map((blog) => (
-          <li key={blog.id}>{blog.title}</li>
-        ))}
-      </ul>
+
+      {user.blogs && user.blogs.length > 0 ? (
+        <Table striped>
+          <tbody>
+            {user.blogs.map((blog) => (
+              <tr key={blog.id}>
+                <td>{blog.title}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      ) : (
+        <p>This user has not added any blogs yet.</p>
+      )}
     </>
   )
 }

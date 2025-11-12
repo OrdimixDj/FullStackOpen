@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { setNotification } from '../reducers/notificationReducer'
 import { changeUser } from '../reducers/userReducer'
+import { Form, Button } from 'react-bootstrap'
 import loginService from '../services/login'
 import PropTypes from 'prop-types'
 
@@ -42,32 +43,32 @@ const LoginForm = () => {
 
   return (
     <div>
-      <h2>Log in to application</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          username
-          <input
+      <h2 style={{ textAlign: 'center' }}>Log in to application</h2>
+      <Form onSubmit={handleLogin} className="w-50 mx-auto">
+        <Form.Group>
+          <Form.Label>username:</Form.Label>
+          <Form.Control
             id="username-input"
             type="text"
             value={username}
             name="Username"
             onChange={({ target }) => setUsername(target.value)}
           />
-        </div>
-        <div>
-          password
-          <input
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>password:</Form.Label>
+          <Form.Control
             id="password-input"
             type="password"
             value={password}
             name="Password"
             onChange={({ target }) => setPassword(target.value)}
           />
-        </div>
-        <button id="login-button" type="submit">
+        </Form.Group>
+        <Button id="login-button" type="submit">
           login
-        </button>
-      </form>
+        </Button>
+      </Form>
     </div>
   )
 }

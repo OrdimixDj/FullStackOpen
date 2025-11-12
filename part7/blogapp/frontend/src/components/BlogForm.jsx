@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { createBlog } from '../reducers/blogReducer'
-import { setNotification } from '../reducers/notificationReducer'
+import { addBlogInUsersList } from '../reducers/usersListReducer'
+import { Form, Button } from 'react-bootstrap'
 import PropTypes from 'prop-types'
 
 const BlogForm = ({ blogFormRef }) => {
@@ -22,32 +23,8 @@ const BlogForm = ({ blogFormRef }) => {
       url: url,
     }
 
-    try {
-      dispatch(createBlog(newBlog, user))
-      dispatch(
-        setNotification(`a new blog ${title} by ${author} added`, 'other', 5),
-      )
-    } catch (exception) {
-      const statusCode = exception.response.status
-
-      if (statusCode === 400) {
-        dispatch(
-          setNotification(
-            `Bad request: title and url are required`,
-            'error',
-            5,
-          ),
-        )
-      } else {
-        dispatch(
-          setNotification(
-            `Error: ${exception.response.data.error}`,
-            'error',
-            5,
-          ),
-        )
-      }
-    }
+    const blogCreated = await dispatch(createBlog(newBlog, user))
+    dispatch(addBlogInUsersList(blogCreated))
 
     blogFormRef.current.toggleVisibility()
 
@@ -56,14 +33,16 @@ const BlogForm = ({ blogFormRef }) => {
     setUrl('')
   }
 
+  const formStyle = { margin: 5 }
+
   return (
     <div>
       <h2>create new</h2>
 
-      <form onSubmit={addBlog}>
-        <div>
-          title:
-          <input
+      <Form onSubmit={addBlog}>
+        <Form.Group>
+          <Form.Label>title:</Form.Label>
+          <Form.Control
             id="title-input"
             type="text"
             value={title}
@@ -71,9 +50,11 @@ const BlogForm = ({ blogFormRef }) => {
             placeholder="title"
             onChange={({ target }) => setTitle(target.value)}
           />
-          <br />
-          author:
-          <input
+        </Form.Group>
+        <br />
+        <Form.Group>
+          <Form.Label>author:</Form.Label>
+          <Form.Control
             id="author-input"
             type="text"
             value={author}
@@ -81,9 +62,11 @@ const BlogForm = ({ blogFormRef }) => {
             placeholder="author"
             onChange={({ target }) => setAuthor(target.value)}
           />
-          <br />
-          url:
-          <input
+        </Form.Group>
+        <br />
+        <Form.Group>
+          <Form.Label>url:</Form.Label>
+          <Form.Control
             id="url-input"
             type="text"
             value={url}
@@ -91,17 +74,19 @@ const BlogForm = ({ blogFormRef }) => {
             placeholder="url"
             onChange={({ target }) => setUrl(target.value)}
           />
-        </div>
-        <button id="create-blog-button" type="submit">
+        </Form.Group>
+        <br />
+        <Button
+          style={{ marginBottom: 10 }}
+          id="create-blog-button"
+          type="submit"
+        >
           create
-        </button>
-      </form>
+        </Button>
+        <br />
+      </Form>
     </div>
   )
-}
-
-BlogForm.propTypes = {
-  handleCreateBlog: PropTypes.func.isRequired,
 }
 
 export default BlogForm

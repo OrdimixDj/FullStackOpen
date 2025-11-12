@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
+import { Navbar, Nav, Button } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import { disconnectUser } from '../reducers/userReducer'
-import { setNotification } from '../reducers/notificationReducer'
 
 const Menu = () => {
   const dispatch = useDispatch()
@@ -11,18 +11,11 @@ const Menu = () => {
   const handleDisconnectUser = async (event) => {
     event.preventDefault()
 
-    try {
-      dispatch(disconnectUser())
-    } catch (exception) {
-      dispatch(
-        setNotification(`Error: ${exception.response.data.error}`, 'error', 5),
-      )
-    }
+    dispatch(disconnectUser())
   }
 
   const menuStyle = {
     backgroundColor: '#d3d3d3',
-    padding: 5,
     display: 'flex',
   }
 
@@ -31,31 +24,39 @@ const Menu = () => {
   }
 
   return (
-    <div style={menuStyle}>
-      <Link style={padding} to="/">
-        blogs
-      </Link>
-      <Link style={padding} to="/users">
-        users
-      </Link>
-
-      {user ? (
-        <div style={padding}>
-          {user.name} logged in
-          <button
-            style={{ marginLeft: 5 }}
-            id="logout-button"
-            onClick={handleDisconnectUser}
-          >
-            logout
-          </button>
-        </div>
-      ) : (
-        <Link style={padding} to="/login">
-          login
-        </Link>
-      )}
-    </div>
+    <Navbar
+      style={menuStyle}
+      collapseOnSelect
+      expand="lg"
+      bg="#d3d3d3"
+      variant="dark"
+    >
+      <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+      <Navbar.Collapse id="responsive-navbar-nav">
+        <Nav className="me-auto">
+          <Nav.Link href="#" as="span">
+            <Link to="/">blogs</Link>
+          </Nav.Link>
+          <Nav.Link href="#" as="span">
+            <Link to="/users">users</Link>
+          </Nav.Link>
+          <Nav style={{ marginLeft: 5 }}>
+            <Navbar.Text className="me-2 mb-0 text-primary">
+              {user.name} logged in
+            </Navbar.Text>
+            <Button
+              style={{ marginLeft: 5 }}
+              id="logout-button"
+              onClick={handleDisconnectUser}
+              variant="outline-secondary"
+              size="sm"
+            >
+              logout
+            </Button>
+          </Nav>
+        </Nav>
+      </Navbar.Collapse>
+    </Navbar>
   )
 }
 

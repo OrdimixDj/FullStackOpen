@@ -13,6 +13,7 @@ import UsersList from './components/UsersList'
 import User from './components/User'
 import Blog from './components/Blog'
 import Menu from './components/Menu'
+import { Container } from 'react-bootstrap'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -37,7 +38,7 @@ const App = () => {
   }
 
   return (
-    <div>
+    <Container>
       <Menu />
       <Notification />
 
@@ -54,7 +55,7 @@ const App = () => {
               >
                 <BlogForm blogFormRef={blogFormRef} />
               </Togglable>
-
+              <br />
               <BlogList />
             </>
           }
@@ -64,7 +65,7 @@ const App = () => {
         <Route path="/users/:id" element={<User />} />
         <Route path="/blogs/:id" element={<Blog />} />
       </Routes>
-    </div>
+    </Container>
   )
 }
 

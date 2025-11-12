@@ -1,103 +1,103 @@
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { likeBlog, commentBlog } from '../reducers/blogReducer'
-import { setNotification } from '../reducers/notificationReducer'
+import { likeBlog, commentBlog, deleteBlog } from '../reducers/blogReducer'
+import { Table, Button, Form } from 'react-bootstrap'
+
+import { useNavigate } from 'react-router-dom'
 
 const Blog = () => {
+  const navigate = useNavigate()
   const [commentContent, setCommentContent] = useState('')
+
+  const user = useSelector((state) => state.user)
 
   const blogId = useParams().id
   const blogs = useSelector((state) => state.blogs)
 
   const blog = blogs.find((blog) => blog.id === blogId)
 
-  const dispatch = useDispatch()
-
-  const user = useSelector((state) => state.user)
-
-  const increaseLike = async (event) => {
-    event.preventDefault()
-
-    try {
-      dispatch(likeBlog(blog))
-      dispatch(
-        setNotification(
-          `Blog ${blog.title} by ${blog.author} successfully voted`,
-          'other',
-          5,
-        ),
-      )
-    } catch (exception) {
-      dispatch(
-        setNotification(
-          `Unable to like that blog. Exact error: ${exception.response.data.error}`,
-          'error',
-          5,
-        ),
-      )
-    }
+  if (!blog) {
+    return null
   }
 
-  const addBlogComment = async (event) => {
+  const showWhenSameUser = {
+    display: user.username === blog.user.username ? '' : 'none',
+  }
+
+  const dispatch = useDispatch()
+
+  const increaseLike = (event) => {
     event.preventDefault()
+    dispatch(likeBlog(blog))
+  }
 
-    try {
-      dispatch(commentBlog(blog, commentContent))
-      dispatch(
-        setNotification(`a new comment ${commentContent} added`, 'other', 5),
-      )
-    } catch (exception) {
-      dispatch(
-        setNotification(`Error: ${exception.response.data.error}`, 'error', 5),
-      )
-    }
-
+  const addBlogComment = (event) => {
+    event.preventDefault()
+    dispatch(commentBlog(blog, commentContent))
     setCommentContent('')
   }
 
-  if (!blog) {
-    return null
+  const removeBlog = async (event) => {
+    event.preventDefault()
+
+    if (window.confirm('Remove blog ' + blog.title + ' by ' + blog.author)) {
+      await dispatch(deleteBlog(blog))
+      navigate('/')
+    }
   }
 
   return (
     <div>
       <h1>
-        {blog.title} {blog.author}
+        {blog.title} <em>written by {blog.author}</em>
       </h1>
       <div>
         <a href={blog.url}>{blog.url}</a>
       </div>
-      <div>
+      <br />
+      <div className="d-flex align-items-center">
         {blog.likes} likes
-        <button onClick={increaseLike}>like</button>
+        <Button style={{ marginLeft: 5 }} onClick={increaseLike}>
+          like
+        </Button>
       </div>
+      <br />
       <div>added by {blog.user.name}</div>
-
+      <br />
+      <div id="remove-blog-button" style={showWhenSameUser}>
+        <Button onClick={removeBlog}>remove</Button>
+      </div>
+      <br />
       <h2>comments</h2>
-      <form style={{ display: 'flex' }} onSubmit={addBlogComment}>
-        <div>
-          <input
+      <Form style={{ display: 'flex' }} onSubmit={addBlogComment}>
+        <Form.Group className="d-flex gap-2">
+          <Form.Control
             type="text"
             value={commentContent}
             placeholder="type your comment"
             onChange={({ target }) => setCommentContent(target.value)}
           />
-        </div>
-        <button id="create-blog-button" type="submit">
-          add comment
-        </button>
-      </form>
-      <ul>
-        {blog.comments.map(
-          (
-            comment,
-            i, // Because a comment doesn't have an id, I looked on internet and saw we can use the i variable
-          ) => (
-            <li key={i}>{comment}</li>
-          ),
-        )}
-      </ul>
+          <Button className="text-nowrap" id="create-blog-button" type="submit">
+            add comment
+          </Button>
+        </Form.Group>
+      </Form>
+      <br />
+      <Table striped>
+        <tbody>
+          {blog.comments.map(
+            (
+              comment,
+              i, // Because a comment doesn't have an id, I looked on internet and saw we can use the i variable
+            ) => (
+              <tr key={i}>
+                <td key={i}>{comment}</td>
+              </tr>
+            ),
+          )}
+        </tbody>
+      </Table>
     </div>
   )
 }

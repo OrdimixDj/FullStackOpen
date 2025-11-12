@@ -12,6 +12,7 @@ import BlogList from './components/BlogList'
 import UsersList from './components/UsersList'
 import User from './components/User'
 import Blog from './components/Blog'
+import Menu from './components/Menu'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -37,18 +38,15 @@ const App = () => {
 
   return (
     <div>
+      <Menu />
       <Notification />
-      <h2>blogs</h2>
-      <Login />
-
-      <br />
-      <br />
 
       <Routes>
         <Route
           path="/"
           element={
             <>
+              <h2>blog app</h2>
               <Togglable
                 buttonId="show-create-blog-div-button"
                 buttonLabel="create new blog"

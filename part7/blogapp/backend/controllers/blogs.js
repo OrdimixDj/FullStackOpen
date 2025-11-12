@@ -26,6 +26,7 @@ blogRouter.post(
       author: body.author,
       url: body.url,
       likes: body.likes || 0,
+      comments: body.comments || [],
       user: user.id,
     })
 
@@ -39,6 +40,21 @@ blogRouter.post(
     }
   },
 )
+
+blogRouter.post('/:id/comments', async (request, response, next) => {
+  const commentContent = request.body.content
+
+  const blog = await Blog.findById(request.params.id)
+
+  try {
+    blog.comments = blog.comments.concat(commentContent)
+
+    const savedBlog = await blog.save()
+    response.status(201).json(savedBlog)
+  } catch (exception) {
+    next(exception)
+  }
+})
 
 blogRouter.delete(
   '/:id',
@@ -78,7 +94,7 @@ blogRouter.put(
   middleware.tokenExtractor,
   middleware.userExtractor,
   async (request, response, next) => {
-    const { title, author, url, likes } = request.body
+    const { title, author, url, likes, comments } = request.body
     const blog = await Blog.findById(request.params.id)
 
     if (!blog) {
@@ -90,6 +106,7 @@ blogRouter.put(
       blog.author = author
       blog.url = url
       blog.likes = likes
+      blog.comments = comments
 
       const updatedBlog = await blog.save()
       response.json(updatedBlog)

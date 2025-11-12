@@ -53,6 +53,13 @@ export const changeBlog = (newBlog) => {
   }
 }
 
+export const commentBlog = (blog, commentContent) => {
+  return async (dispatch) => {
+    const blogUpdated = await blogService.comment(blog, commentContent)
+    dispatch(updateBlog(blogUpdated))
+  }
+}
+
 export const deleteBlog = (blogToDelete) => {
   return async (dispatch, getState) => {
     const token = getState().user.token

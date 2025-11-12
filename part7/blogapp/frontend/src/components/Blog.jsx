@@ -1,9 +1,12 @@
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { likeBlog } from '../reducers/blogReducer'
+import { likeBlog, commentBlog } from '../reducers/blogReducer'
 import { setNotification } from '../reducers/notificationReducer'
 
 const Blog = () => {
+  const [commentContent, setCommentContent] = useState('')
+
   const blogId = useParams().id
   const blogs = useSelector((state) => state.blogs)
 
@@ -36,6 +39,27 @@ const Blog = () => {
     }
   }
 
+  const addBlogComment = async (event) => {
+    event.preventDefault()
+
+    try {
+      dispatch(commentBlog(blog, commentContent))
+      dispatch(
+        setNotification(`a new comment ${commentContent} added`, 'other', 5),
+      )
+    } catch (exception) {
+      dispatch(
+        setNotification(`Error: ${exception.response.data.error}`, 'error', 5),
+      )
+    }
+
+    setCommentContent('')
+  }
+
+  if (!blog) {
+    return null
+  }
+
   return (
     <div>
       <h1>
@@ -49,6 +73,31 @@ const Blog = () => {
         <button onClick={increaseLike}>like</button>
       </div>
       <div>added by {blog.user.name}</div>
+
+      <h2>comments</h2>
+      <form style={{ display: 'flex' }} onSubmit={addBlogComment}>
+        <div>
+          <input
+            type="text"
+            value={commentContent}
+            placeholder="type your comment"
+            onChange={({ target }) => setCommentContent(target.value)}
+          />
+        </div>
+        <button id="create-blog-button" type="submit">
+          add comment
+        </button>
+      </form>
+      <ul>
+        {blog.comments.map(
+          (
+            comment,
+            i, // Because a comment doesn't have an id, I looked on internet and saw we can use the i variable
+          ) => (
+            <li key={i}>{comment}</li>
+          ),
+        )}
+      </ul>
     </div>
   )
 }

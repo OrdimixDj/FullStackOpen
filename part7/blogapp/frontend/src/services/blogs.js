@@ -21,6 +21,15 @@ const update = async (blog, token) => {
   return response.data
 }
 
+const comment = async (blog, commentContent) => {
+  const url = baseUrl + '/' + blog.id + '/comments'
+  const commentToSend = {
+    content: commentContent,
+  }
+  const response = await axios.post(url, commentToSend)
+  return response.data
+}
+
 const remove = async (blog, token) => {
   const config = {
     headers: { Authorization: `Bearer ${token}` },
@@ -36,4 +45,4 @@ const getAll = () => {
   return request.then((response) => response.data)
 }
 
-export default { create, getAll, update, remove }
+export default { create, getAll, update, remove, comment }

@@ -20,7 +20,7 @@ const Menu = () => {
     }
   }
 
-  const backgroundColor = {
+  const menuStyle = {
     backgroundColor: '#d3d3d3',
     padding: 5,
     display: 'flex',
@@ -31,7 +31,7 @@ const Menu = () => {
   }
 
   return (
-    <div style={backgroundColor}>
+    <div style={menuStyle}>
       <Link style={padding} to="/">
         blogs
       </Link>

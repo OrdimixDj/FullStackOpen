@@ -50,6 +50,11 @@ const typeDefs = `
     value: String!
   }
 
+  type LoginResponse {
+    token: Token!
+    user: User!
+  }
+
   type Query {
     bookCount: Int!
     authorCount: Int!
@@ -77,7 +82,7 @@ const typeDefs = `
     login(
       username: String!
       password: String!
-    ): Token
+    ): LoginResponse
   }`;
 
 const resolvers = {
@@ -230,7 +235,12 @@ const resolvers = {
         id: user._id,
       };
 
-      return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
+      return {
+        token: {
+          value: jwt.sign(userForToken, process.env.JWT_SECRET),
+        },
+        user: user,
+      };
     },
   },
 };

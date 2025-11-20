@@ -5,18 +5,27 @@ import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import Notify from "./components/Notify";
 import LoginForm from "./components/LoginForm";
+import Recommendations from "./components/Recommendations";
 
 const App = () => {
   const [page, setPage] = useState("authors");
   const [token, setToken] = useState(null);
+  const [favoriteGenre, setFavoriteGenre] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const client = useApolloClient();
 
   useEffect(() => {
-    const token = localStorage.getItem("library-user-token");
+    const localToken = localStorage.getItem("library-user-token");
+    const localFavoriteGenre = localStorage.getItem(
+      "library-user-favoriteGenre"
+    );
 
-    if (token) {
-      setToken(token);
+    if (localToken) {
+      setToken(localToken);
+    }
+
+    if (localFavoriteGenre) {
+      setFavoriteGenre(localFavoriteGenre);
     }
   }, []);
 
@@ -27,10 +36,18 @@ const App = () => {
     }, 5000);
   };
 
-  const logout = () => {
+  // I transformed the normal function to an async one: without awaiting for client.clearStore(),
+  // I was getting an error "Uncaught (in promise) AbortError: The operation was aborted."
+  const logout = async () => {
+    setErrorMessage(null);
     setToken(null);
+    setFavoriteGenre(null);
     localStorage.clear();
-    client.resetStore();
+    try {
+      await client.clearStore();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   if (!token) {
@@ -47,6 +64,7 @@ const App = () => {
         <Books show={page === "books"} />
         <LoginForm
           setToken={setToken}
+          setFavoriteGenre={setFavoriteGenre}
           setError={notify}
           setPage={setPage}
           show={page === "login"}
@@ -61,12 +79,17 @@ const App = () => {
         <button onClick={() => setPage("authors")}>authors</button>
         <button onClick={() => setPage("books")}>books</button>
         <button onClick={() => setPage("add")}>add book</button>
+        <button onClick={() => setPage("recommend")}>recommend</button>
         <button onClick={logout}>logout</button>
       </div>
 
       <Authors show={page === "authors"} />
       <Books show={page === "books"} />
       <NewBook show={page === "add"} />
+      <Recommendations
+        favoriteGenre={favoriteGenre}
+        show={page === "recommend"}
+      />
     </div>
   );
 };

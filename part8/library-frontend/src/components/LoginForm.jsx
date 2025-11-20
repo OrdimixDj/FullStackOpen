@@ -1,14 +1,10 @@
 import { useState, useEffect } from "react";
-import { useMutation, useApolloClient } from "@apollo/client/react";
+import { useMutation } from "@apollo/client/react";
 import { LOGIN } from "../queries";
 
 const LoginForm = (props) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
-  if (!props.show) {
-    return null;
-  }
 
   const [login, result] = useMutation(LOGIN, {
     onError: (error) => {
@@ -18,12 +14,19 @@ const LoginForm = (props) => {
 
   useEffect(() => {
     if (result.data) {
-      const token = result.data.login.value;
+      const token = result.data.login.token.value;
+      const favoriteGenre = result.data.login.user.favoriteGenre;
       props.setToken(token);
+      props.setFavoriteGenre(favoriteGenre);
       localStorage.setItem("library-user-token", token);
+      localStorage.setItem("library-user-favoriteGenre", favoriteGenre);
       props.setPage("authors");
     }
   }, [result.data]);
+
+  if (!props.show) {
+    return null;
+  }
 
   const submit = async (event) => {
     event.preventDefault();

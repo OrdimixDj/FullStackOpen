@@ -22,7 +22,6 @@ const Books = (props) => {
 
   if (genre !== "all genres") {
     books = books.filter((book) => book.genres.includes(genre));
-    console.log(books);
   }
 
   return (

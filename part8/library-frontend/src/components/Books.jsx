@@ -4,9 +4,11 @@ import { useQuery } from "@apollo/client/react";
 import { ALL_BOOKS, ALL_GENRES } from "../queries";
 
 const Books = (props) => {
-  const [genre, setGenre] = useState("all genres");
+  const [genre, setGenre] = useState("");
 
-  const booksQueryResult = useQuery(ALL_BOOKS);
+  const booksQueryResult = useQuery(ALL_BOOKS, {
+    variables: { genre },
+  });
   const genresQueryResult = useQuery(ALL_GENRES);
 
   if (booksQueryResult.loading || genresQueryResult.loading) {
@@ -19,10 +21,6 @@ const Books = (props) => {
 
   let books = booksQueryResult.data.allBooks;
   const genres = genresQueryResult.data.allGenres;
-
-  if (genre !== "all genres") {
-    books = books.filter((book) => book.genres.includes(genre));
-  }
 
   return (
     <div>
@@ -56,7 +54,7 @@ const Books = (props) => {
           {g}
         </button>
       ))}
-      <button onClick={() => setGenre("all genres")}>all genres</button>
+      <button onClick={() => setGenre("")}>all genres</button>
     </div>
   );
 };

@@ -26,7 +26,7 @@ const Books = (props) => {
     <div>
       <h2>books</h2>
 
-      {genre !== "all genres" ? (
+      {genre !== "" ? (
         <div>
           {"in genre "}
           <b>{genre}</b>

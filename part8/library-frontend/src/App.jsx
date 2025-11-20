@@ -83,9 +83,10 @@ const App = () => {
         <button onClick={logout}>logout</button>
       </div>
 
+      <Notify errorMessage={errorMessage} />
       <Authors show={page === "authors"} />
       <Books show={page === "books"} />
-      <NewBook show={page === "add"} />
+      <NewBook setError={notify} show={page === "add"} />
       <Recommendations
         favoriteGenre={favoriteGenre}
         show={page === "recommend"}

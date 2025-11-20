@@ -7,6 +7,7 @@ export const ALL_BOOKS = gql`
       author {
         name
       }
+      genres
       published
       id
     }
@@ -21,6 +22,12 @@ export const ALL_AUTHORS = gql`
       bookCount
       id
     }
+  }
+`;
+
+export const ALL_GENRES = gql`
+  query {
+    allGenres
   }
 `;
 

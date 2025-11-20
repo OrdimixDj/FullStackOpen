@@ -2,24 +2,26 @@ import { useState, useEffect } from "react";
 import { useMutation, useApolloClient } from "@apollo/client/react";
 import { LOGIN } from "../queries";
 
-const LoginForm = ({ setError, setToken, setPage }) => {
+const LoginForm = (props) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const client = useApolloClient();
+  if (!props.show) {
+    return null;
+  }
 
   const [login, result] = useMutation(LOGIN, {
     onError: (error) => {
-      setError(error.message);
+      props.setError(error.message);
     },
   });
 
   useEffect(() => {
     if (result.data) {
       const token = result.data.login.value;
-      setToken(token);
+      props.setToken(token);
       localStorage.setItem("library-user-token", token);
-      setPage("authors");
+      props.setPage("authors");
     }
   }, [result.data]);
 

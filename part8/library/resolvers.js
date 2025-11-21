@@ -13,11 +13,13 @@ const resolvers = {
     bookCount: async () => Book.collection.countDocuments(),
     authorCount: async () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
+      console.log("Book.find");
       if (!args.genre) {
         return Book.find({}).populate("author");
       }
 
       // Found that solution on internet, less difficult than Book.collection because Book.find will implicity look into each book
+      // Already used populate from the beginning of the
       return Book.find({ genres: args.genre }).populate("author");
     },
     allAuthors: async () => Author.find({}),
@@ -41,8 +43,8 @@ const resolvers = {
   },
 
   Author: {
-    bookCount: (author) => {
-      return Book.collection.countDocuments({ author: author._id });
+    bookCount: (author, args, context) => {
+      return context.bookCountLoader.load(author._id);
     },
   },
 

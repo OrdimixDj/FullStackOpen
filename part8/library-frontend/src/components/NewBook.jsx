@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client/react";
+import { updateCache } from "../App";
 
 import { ALL_BOOKS, ALL_AUTHORS, ALL_GENRES, CREATE_BOOK } from "../queries";
 
@@ -18,35 +19,7 @@ const NewBook = (props) => {
     refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_GENRES }],
 
     update: (cache, response) => {
-      cache.updateQuery(
-        { query: ALL_BOOKS, variables: { genre: "" } },
-        ({ allBooks }) => {
-          return {
-            allBooks: allBooks.concat(response.data.addBook),
-          };
-        }
-      );
-
-      // I noticed something during my tests: if I don't refresh ALL_BOOKS for all genres of the new book,
-      // only the list without filter will be updated
-      response.data.addBook.genres.forEach((g) => {
-        cache.updateQuery(
-          { query: ALL_BOOKS, variables: { genre: g } },
-          // I replaced allBooks by data, because allBooks may not exist in case of
-          // button genre for g was never clicked
-          (data) => {
-            // If one of the genres was never clicked before, it doesn't concat the book to the answer in cache
-            // Because it simply have no allBooks answer cache for g
-            if (!data) {
-              return null;
-            }
-
-            return {
-              allBooks: data.allBooks.concat(response.data.addBook),
-            };
-          }
-        );
-      });
+      updateCache(cache, response.data.addBook);
     },
   });
 

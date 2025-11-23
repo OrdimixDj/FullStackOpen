@@ -8,6 +8,31 @@ interface ExercisesValues {
   average: number;
 }
 
+interface ExercisesInitialValues {
+  values: number[];
+  target: number;
+}
+
+const parseExercisesArguments = (args: string[]): ExercisesInitialValues => {
+  if (args.length < 4) throw new Error('Not enough arguments');
+
+  const hoursList = []
+
+  // we start the loop at i=2 because the first 2 args are not interesting in that case
+  for (let i = 3; i < args.length; i++) {
+    if (!isNaN(Number(args[i]))) {
+      hoursList.push(Number(args[i]))
+    } else {
+        throw new Error('Provided values were not numbers!');
+    }
+  }
+
+  return {
+    values: hoursList,
+    target: Number(args[2])
+  }
+}
+
 const exerciseCalculator = (weekQuantities: number[], target: number): ExercisesValues => {
   const totalHours = weekQuantities.reduce((sum, val) => {
     return sum + val;
@@ -42,4 +67,15 @@ const exerciseCalculator = (weekQuantities: number[], target: number): Exercises
   }
 }
 
-console.log(exerciseCalculator([3, 0, 2, 4.5, 0, 3, 1], 2));
+// console.log(exerciseCalculator([3, 0, 2, 4.5, 0, 3, 1], 2));
+
+try {
+  const { values, target } = parseExercisesArguments(process.argv);
+  console.log(exerciseCalculator(values, target));
+} catch (error: unknown) {
+  let errorMessage = 'Something bad happened.'
+  if (error instanceof Error) {
+    errorMessage += ' Error: ' + error.message;
+  }
+  console.log(errorMessage);
+}

@@ -1,4 +1,4 @@
-import {calculateBmi} from './bmiCalculator'
+import {calculateBmi} from './bmiCalculator';
 
 import express from 'express';
 const app = express();
@@ -16,8 +16,8 @@ app.get('/bmi', (req, res) => {
       error: 'malformatted parameters'
     });
   } else {
-    const heightValue = Number(height)
-    const weightValue = Number(weight)
+    const heightValue = Number(height);
+    const weightValue = Number(weight);
     const bmi = calculateBmi(heightValue, weightValue);
 
     return res.send({

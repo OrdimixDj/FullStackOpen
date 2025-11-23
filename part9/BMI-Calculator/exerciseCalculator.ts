@@ -33,7 +33,7 @@ const parseExercisesArguments = (args: string[]): ExercisesInitialValues => {
   };
 };
 
-const exerciseCalculator = (weekQuantities: number[], target: number): ExercisesValues => {
+export const exerciseCalculator = (weekQuantities: number[], target: number): ExercisesValues => {
   const totalHours = weekQuantities.reduce((sum, val) => {
     return sum + val;
   }, 0);
@@ -41,14 +41,14 @@ const exerciseCalculator = (weekQuantities: number[], target: number): Exercises
   const averageHours = totalHours / weekQuantities.length;
 
   let grade = 3;
-  let gradeDesc = "Really good!";
+  let gradeDesc = "good";
 
   if(averageHours < target) {
     const gradeStep = target / 2;
 
     if(averageHours <= gradeStep) {
         grade = 1;
-        gradeDesc = "Really bad! Try to do better next time";
+        gradeDesc = "bad";
     }
     else {
         grade = 2;
@@ -68,14 +68,15 @@ const exerciseCalculator = (weekQuantities: number[], target: number): Exercises
 };
 
 // console.log(exerciseCalculator([3, 0, 2, 4.5, 0, 3, 1], 2));
-
-try {
-  const { values, target } = parseExercisesArguments(process.argv);
-  console.log(exerciseCalculator(values, target));
-} catch (error: unknown) {
-  let errorMessage = 'Something bad happened.';
-  if (error instanceof Error) {
-    errorMessage += ' Error: ' + error.message;
+if(require.main === module) {
+  try {
+    const { values, target } = parseExercisesArguments(process.argv);
+    console.log(exerciseCalculator(values, target));
+  } catch (error: unknown) {
+    let errorMessage = 'Something bad happened.';
+    if (error instanceof Error) {
+      errorMessage += ' Error: ' + error.message;
+    }
+    console.log(errorMessage);
   }
-  console.log(errorMessage);
 }

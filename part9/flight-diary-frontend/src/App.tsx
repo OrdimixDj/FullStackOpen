@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
+import axios from 'axios';
 
 import { Diary, Weather, Visibility } from "./types";
 import { getAllDiaries, createDiary } from './diaryService';
-
 
 interface DiaryFormProps {
   diaries: Diary[];
@@ -10,13 +10,18 @@ interface DiaryFormProps {
 }
 
 const DiaryForm = (props: DiaryFormProps) => {
+  const [error, setError] = useState('');
   const [newDate, setNewDate] = useState('');
   const [newWeather, setNewWeather] = useState('');
   const [newVisibility, setNewVisibility] = useState('');
   const [newComment, setNewComment] = useState('');
 
+  interface ValidationError {
+    message: string;
+    errors: Record<string, string[]>
+  }
 
-  const diaryCreation = (event: React.SyntheticEvent) => {
+  const diaryCreation = async (event: React.SyntheticEvent) => {
     event.preventDefault()
     const newDiary = {
       date: newDate,
@@ -25,9 +30,20 @@ const DiaryForm = (props: DiaryFormProps) => {
       comment: newComment,
     }
 
-    createDiary(newDiary).then(data => {
+    try {
+      const data = await createDiary(newDiary)
       props.setDiaries(props.diaries.concat(data))
-    })
+    } catch (error) {
+      if (axios.isAxiosError<ValidationError>(error)) {
+        setError("Error: " + error.response?.data.message);
+        setTimeout(() => {
+          setError('');
+        }, 5000);
+      } else {
+        console.error(error);
+      }
+
+    }
 
     setNewDate('');
     setNewWeather('');
@@ -38,6 +54,7 @@ const DiaryForm = (props: DiaryFormProps) => {
   return (
     <>
       <h2>Add new entry</h2>
+      {error!== '' ? <p style={{color: 'red'}}>{error}</p> : ''}
       <form onSubmit={diaryCreation}>
         date<input
           value={newDate}

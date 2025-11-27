@@ -56,20 +56,22 @@ const DiaryForm = (props: DiaryFormProps) => {
       <h2>Add new entry</h2>
       {error!== '' ? <p style={{color: 'red'}}>{error}</p> : ''}
       <form onSubmit={diaryCreation}>
-        date<input
+        date<input type="date"
           value={newDate}
           onChange={(event) => setNewDate(event.target.value)} 
         />
         <br/>
-        visibility<input
-          value={newVisibility}
-          onChange={(event) => setNewVisibility(event.target.value)} 
-        />
+        {/* &nbsp; adds an indentation */}
+        visibility &nbsp;&nbsp;&nbsp;&nbsp; {Object.values(Visibility).map(visibility => (
+          <label key={visibility}> {visibility}
+            <input type="radio" name="visibility" value={visibility} onChange={() => setNewVisibility(visibility)} />
+          </label> ))}
         <br/>
-        weather<input
-          value={newWeather}
-          onChange={(event) => setNewWeather(event.target.value)} 
-        />
+        {/* &nbsp; adds an indentation */}
+        weather &nbsp;&nbsp;&nbsp;&nbsp; {Object.values(Weather).map(weather => (
+          <label key={weather}> {weather}
+            <input type="radio" name="weather" value={weather} checked={newWeather === weather} onChange={() => setNewWeather(weather)} />
+          </label> ))}
         <br/>
         comment<input
           value={newComment}

@@ -1,6 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Patient, Diagnosis, Entry } from "../../types";
+import { Box } from '@mui/material';
+import { Work, LocalHospital, Favorite } from '@mui/icons-material';
 
 import patientService from "../../services/patients";
 
@@ -12,6 +14,69 @@ import TransgenderIcon from '@mui/icons-material/Transgender';
 interface PatientDetailsPageProps {
   diagnoses: Diagnosis[];
 }
+
+const assertNever = (value: never): never => {
+  throw new Error(
+    `Unhandled discriminated union member: ${JSON.stringify(value)}`
+  );
+};
+
+const EntryDetails: React.FC<{ entry: Entry, diagnoses: Diagnosis[] }> = ({entry, diagnoses}) => {
+  switch (entry.type) {
+    case "Hospital":
+      return (
+        <div>
+          {entry.date} <LocalHospital/><br/>
+          <em>{entry.description}</em><br/>
+          <ul>
+              {entry.diagnosisCodes ? entry.diagnosisCodes.map((diagnosisCode: string) => {
+                const diagnoseDescription = diagnoses.find(d => d.code === diagnosisCode);
+
+                return (
+                  <li key={diagnosisCode}>{diagnosisCode} {diagnoseDescription ? diagnoseDescription.name : ""}</li>
+                );
+              }) : null}
+          </ul>
+          discharge on the {entry.discharge.date}: {entry.discharge.criteria}<br/>
+          diagnose by {entry.specialist}
+        </div>
+      );
+    case "HealthCheck":
+      let heartColor;
+
+      switch (entry.healthCheckRating) {
+        case 1:
+          heartColor="yellow";
+          break;
+        case 2:
+          heartColor="orange";
+          break;
+        case 3:
+          heartColor="red";
+          break;
+        default:
+          heartColor="green";
+      }
+      return (
+        <div>
+          {entry.date} <LocalHospital/><br/>
+          <em>{entry.description}</em><br/>
+          <Favorite sx={{color:heartColor}}/><br/>
+          diagnose by {entry.specialist}
+        </div>
+      );
+    case "OccupationalHealthcare":
+      return (
+        <div>
+          {entry.date} <Work/> <em>{entry.employerName}</em><br/>
+          <em>{entry.description}</em><br/>
+          diagnose by {entry.specialist}
+        </div>
+      );
+    default:
+      return assertNever(entry);
+  }
+};
 
 const PatientDetailsPage = ({diagnoses} : PatientDetailsPageProps) => {
   const [patient, setPatient] = useState<Patient>();
@@ -54,18 +119,9 @@ const PatientDetailsPage = ({diagnoses} : PatientDetailsPageProps) => {
       <h3>entries</h3>
 
       {patient.entries.length > 0 ? patient.entries.map((entry: Entry) => (
-          <div key={entry.id}>
-            {entry.date} <em>{entry.description}</em>
-            <ul>
-              {entry.diagnosisCodes ? entry.diagnosisCodes.map((diagnosisCode: string) => {
-                const diagnoseDescription = diagnoses.find(d => d.code === diagnosisCode);
-
-                return (
-                  <li key={diagnosisCode}>{diagnosisCode} {diagnoseDescription ? diagnoseDescription.name : ""}</li>
-                );
-              }) : null}
-            </ul>
-          </div>
+        <Box key={entry.id} sx={{border: '1px solid black'}}>
+            <EntryDetails diagnoses={diagnoses} entry={entry}/>
+        </Box>
       )) : "There is no entry"}
     </div>
   );
